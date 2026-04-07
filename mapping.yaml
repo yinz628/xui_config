@@ -1,0 +1,24 @@
+version: 1
+sources:
+  - id: airport_a
+    url: file:///F:/x-ui/310config86-106.yaml
+    enabled: true
+    format: clash
+  - id: airport_b
+    url: file:///F:/x-ui/RH5SFz15rrci.yaml
+    enabled: true
+    format: clash
+groups:
+  - name: tg_hk
+    filter: '(?i)(hk|hong kong|香港)'
+    exclude: '(?i)(iepl|iplc)'
+    port_range: {start: 20000, end: 20049}
+  - name: browser_us
+    filter: '(?i)(us|united states|美国)'
+    port_range: {start: 21000, end: 21049}
+runtime:
+  cache_dir: ./cache/subscriptions
+  state_path: ./state/port_bindings.json
+  output_path: ./config.generated.json
+  report_path: ./config.generated.report.json
+  output_mode: config_json
