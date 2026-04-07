@@ -2,7 +2,7 @@ param(
     [string]$TargetHost = $(if ($env:SMOKE_SSH_HOST) { $env:SMOKE_SSH_HOST } else { '192.168.2.195' }),
     [int]$Port = $(if ($env:SMOKE_SSH_PORT) { [int]$env:SMOKE_SSH_PORT } else { 22 }),
     [string]$User = $(if ($env:SMOKE_SSH_USER) { $env:SMOKE_SSH_USER } else { 'root' }),
-    [string]$RemotePath = $(if ($env:SMOKE_REMOTE_PATH) { $env:SMOKE_REMOTE_PATH } else { '/opt/EasyProxiesV2-smoke' }),
+    [string]$RemotePath = $(if ($env:SMOKE_REMOTE_PATH) { $env:SMOKE_REMOTE_PATH } else { '/opt/xui-config' }),
     [string]$Password = $env:SMOKE_SSH_PASSWORD
 )
 
