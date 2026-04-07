@@ -150,3 +150,4 @@ def test_reports_page_reads_report_and_state_files(tmp_path: Path) -> None:
     assert response.status_code == 200
     assert "group_not_matched" in response.text
     assert "tg_hk" in response.text
+    assert "20000" in response.text

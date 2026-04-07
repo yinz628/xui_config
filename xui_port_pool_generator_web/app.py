@@ -1,8 +1,8 @@
+import os
 from dataclasses import dataclass
 from pathlib import Path
-import os
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -17,6 +17,11 @@ from .mapping_store import (
     load_state,
     load_state_groups,
     save_mapping_raw,
+)
+from .source_tools import (
+    import_yaml_source,
+    inspect_source_url,
+    parse_node_payload,
 )
 
 
@@ -124,6 +129,10 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
                 "request": request,
                 "mapping": mapping,
                 "saved": request.query_params.get("saved") == "1",
+                "check_result": None,
+                "check_index": None,
+                "import_message": None,
+                "node_preview": None,
             },
         )
 
@@ -134,6 +143,78 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
             return auth_redirect
         _save_sources_from_request(await request.form(), settings)
         return RedirectResponse(url="/sources?saved=1", status_code=303)
+
+    @app.post("/sources/check", response_class=HTMLResponse)
+    async def sources_check(request: Request):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        form = await request.form()
+        mapping = _mapping_from_sources_form(form, settings)
+        index = int(form.get("check_index", 0))
+        source = mapping["sources"][index]
+        check_result = inspect_source_url(source["url"], source["format"])
+        return templates.TemplateResponse(
+            request,
+            "sources.html",
+            {
+                "request": request,
+                "mapping": mapping,
+                "saved": False,
+                "check_result": check_result,
+                "check_index": index,
+                "import_message": None,
+                "node_preview": None,
+            },
+        )
+
+    @app.post("/sources/import-yaml", response_class=HTMLResponse)
+    async def sources_import_yaml(request: Request, yaml_file: UploadFile = File(...)):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        raw = load_mapping_raw(settings.mapping_path)
+        imported = import_yaml_source(
+            yaml_file,
+            settings.mapping_path.parent,
+            {item["id"] for item in raw.get("sources", [])},
+        )
+        raw.setdefault("sources", []).append(imported["source"])
+        save_mapping_raw(settings.mapping_path, raw)
+        mapping = load_mapping_raw(settings.mapping_path)
+        return templates.TemplateResponse(
+            request,
+            "sources.html",
+            {
+                "request": request,
+                "mapping": mapping,
+                "saved": False,
+                "check_result": None,
+                "check_index": None,
+                "import_message": f"导入成功：新增 {imported['source']['id']}，识别到 {imported['node_count']} 个节点。",
+                "node_preview": None,
+            },
+        )
+
+    @app.post("/sources/inspect-nodes", response_class=HTMLResponse)
+    async def sources_inspect_nodes(request: Request, node_payload: str = Form(...)):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        mapping = load_mapping_raw(settings.mapping_path)
+        return templates.TemplateResponse(
+            request,
+            "sources.html",
+            {
+                "request": request,
+                "mapping": mapping,
+                "saved": False,
+                "check_result": None,
+                "check_index": None,
+                "import_message": None,
+                "node_preview": parse_node_payload(node_payload),
+            },
+        )
 
     @app.get("/groups", response_class=HTMLResponse)
     async def groups_page(request: Request):
@@ -233,6 +314,14 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         mapping = load_mapping_raw(settings.mapping_path)
         report = load_report(resolve_runtime_path(settings.workdir, mapping, "report_path"))
         state = load_state(resolve_runtime_path(settings.workdir, mapping, "state_path"))
+        state_rows = [
+            {
+                "group_name": group_name,
+                "binding_count": len(bindings),
+                "ports": sorted(bindings.keys(), key=int),
+            }
+            for group_name, bindings in state.get("groups", {}).items()
+        ]
         return templates.TemplateResponse(
             request,
             "reports.html",
@@ -240,6 +329,7 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
                 "request": request,
                 "report": report,
                 "state": state,
+                "state_rows": state_rows,
             },
         )
 
@@ -265,6 +355,11 @@ def load_settings_from_env() -> AppSettings:
 
 
 def _save_sources_from_request(form, settings: AppSettings) -> None:
+    raw = _mapping_from_sources_form(form, settings)
+    save_mapping_raw(settings.mapping_path, raw)
+
+
+def _mapping_from_sources_form(form, settings: AppSettings) -> dict:
     raw = load_mapping_raw(settings.mapping_path)
     source_ids = form.getlist("source_id")
     source_urls = form.getlist("source_url")
@@ -283,7 +378,7 @@ def _save_sources_from_request(form, settings: AppSettings) -> None:
             }
         )
     raw["sources"] = sources
-    save_mapping_raw(settings.mapping_path, raw)
+    return raw
 
 
 def resolve_runtime_path(workdir: Path, mapping: dict, key: str) -> Path:

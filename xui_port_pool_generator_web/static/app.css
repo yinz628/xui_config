@@ -63,6 +63,15 @@ input {
   font: inherit;
   background: #fff;
 }
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  font: inherit;
+  background: #fff;
+  resize: vertical;
+}
 select {
   width: 100%;
   padding: 12px 14px;
@@ -108,13 +117,17 @@ button:disabled {
 .app-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 220px 1fr;
 }
 .sidebar {
   padding: 28px 22px;
   border-right: 1px solid rgba(217, 204, 185, 0.9);
   background: rgba(255, 250, 242, 0.84);
   backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -138,6 +151,7 @@ button:disabled {
   padding: 30px;
   display: grid;
   gap: 22px;
+  min-width: 0;
 }
 .hero {
   display: flex;
@@ -181,10 +195,33 @@ button:disabled {
   letter-spacing: 0.08em;
   font-size: 12px;
 }
+.groups-table {
+  table-layout: fixed;
+}
+.groups-table .name-col { width: 14%; }
+.groups-table .rule-col { width: 27%; }
+.groups-table .sources-col { width: 16%; }
+.groups-table .port-col { width: 8%; }
+.rule-field {
+  min-height: 82px;
+  font-family: "IBM Plex Sans", sans-serif;
+  line-height: 1.5;
+}
+.port-field {
+  max-width: 92px;
+}
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
+}
+.issues-panel {
+  max-height: 56vh;
+  overflow: auto;
+}
+.ports-cell {
+  white-space: normal;
+  word-break: break-all;
 }
 .form-actions {
   margin-top: 18px;

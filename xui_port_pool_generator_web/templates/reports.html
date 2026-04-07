@@ -45,7 +45,7 @@
       </article>
     </section>
 
-    <section class="panel">
+    <section class="panel issues-panel">
       <h3>问题列表</h3>
       <table class="data-table">
         <thead>
@@ -74,13 +74,15 @@
           <tr>
             <th>分组</th>
             <th>绑定数量</th>
+            <th>端口列表</th>
           </tr>
         </thead>
         <tbody>
-          {% for group_name, bindings in state.get("groups", {}).items() %}
+          {% for row in state_rows %}
           <tr>
-            <td>{{ group_name }}</td>
-            <td>{{ bindings|length }}</td>
+            <td>{{ row.group_name }}</td>
+            <td>{{ row.binding_count }}</td>
+            <td class="mono ports-cell">{{ row.ports | join(', ') }}</td>
           </tr>
           {% endfor %}
         </tbody>

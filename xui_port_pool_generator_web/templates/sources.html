@@ -30,6 +30,14 @@
     {% if saved %}
     <div class="success-banner">订阅源已保存。</div>
     {% endif %}
+    {% if check_result %}
+    <div class="{% if check_result.get('ok') %}success-banner{% else %}error-banner{% endif %}">
+      {{ check_result.get("message") }}
+    </div>
+    {% endif %}
+    {% if import_message %}
+    <div class="success-banner">{{ import_message }}</div>
+    {% endif %}
 
     <form class="panel" method="post" action="/sources/save">
       <table class="data-table">
@@ -39,9 +47,10 @@
             <th>URL</th>
             <th>启用</th>
             <th>格式</th>
+            <th>操作</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="sources-body">
           {% for item in mapping.get("sources", []) %}
           <tr>
             <td><input name="source_id" value="{{ item.get('id') }}"></td>
@@ -53,6 +62,9 @@
               </select>
             </td>
             <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
+            <td>
+              <button class="secondary" formaction="/sources/check" type="submit" name="check_index" value="{{ loop.index0 }}">立即检测</button>
+            </td>
           </tr>
           {% endfor %}
           <tr>
@@ -65,13 +77,75 @@
               </select>
             </td>
             <td><input name="source_format" value="clash"></td>
+            <td>
+              <button class="secondary" formaction="/sources/check" type="submit" name="check_index" value="{{ mapping.get('sources', [])|length }}">立即检测</button>
+            </td>
           </tr>
         </tbody>
       </table>
       <div class="form-actions">
+        <button class="secondary" type="button" onclick="appendTemplateRow('source-row-template', 'sources-body')">新增一行</button>
         <button type="submit">保存订阅源</button>
       </div>
     </form>
+
+    <section class="panel">
+      <h3>导入 YAML 文件</h3>
+      <form method="post" action="/sources/import-yaml" enctype="multipart/form-data" class="stack">
+        <input type="file" name="yaml_file" accept=".yaml,.yml,application/x-yaml,text/yaml" required>
+        <div class="form-actions">
+          <button type="submit">导入 YAML 文件</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h3>节点数据识别</h3>
+      <form method="post" action="/sources/inspect-nodes" class="stack">
+        <textarea name="node_payload" rows="8" placeholder="可粘贴 Clash YAML、vmess://、vless://、trojan://、ss:// 或 base64 订阅内容"></textarea>
+        <div class="form-actions">
+          <button type="submit">识别节点信息</button>
+        </div>
+      </form>
+
+      {% if node_preview is not none %}
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>类型</th>
+            <th>服务器</th>
+            <th>端口</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in node_preview %}
+          <tr>
+            <td class="mono">{{ item.get("name") }}</td>
+            <td>{{ item.get("type") }}</td>
+            <td class="mono">{{ item.get("server") }}</td>
+            <td class="mono">{{ item.get("port") }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </section>
+
+    <template id="source-row-template">
+      <tr>
+        <td><input name="source_id" value=""></td>
+        <td><input class="mono" name="source_url" value=""></td>
+        <td>
+          <select name="source_enabled">
+            <option value="true" selected>启用</option>
+            <option value="false">停用</option>
+          </select>
+        </td>
+        <td><input name="source_format" value="clash"></td>
+        <td><button class="secondary" type="button" disabled>立即检测</button></td>
+      </tr>
+    </template>
   </section>
 </main>
 {% endblock %}
