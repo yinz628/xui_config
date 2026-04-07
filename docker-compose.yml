@@ -1,0 +1,19 @@
+services:
+  generator:
+    build: .
+    container_name: xui-config-generator
+    working_dir: /app
+    command:
+      - python
+      - generate_xray_config.py
+      - --mapping
+      - /app/config/mapping.yaml
+      - --template
+      - /app/config/config.json
+    environment:
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - ./config:/app/config
+      - ./data/cache:/app/cache
+      - ./data/state:/app/state
+      - ./output:/app/output

@@ -1,0 +1,19 @@
+version: 1
+sources:
+  - id: airport_a
+    url: https://example.com/sub-a
+    enabled: true
+    format: clash
+groups:
+  - name: tg_hk
+    filter: '(?i)(hk|hong kong|香港)'
+    exclude: '(?i)(iepl|iplc)'
+    port_range:
+      start: 20000
+      end: 20049
+runtime:
+  cache_dir: /app/cache
+  state_path: /app/state/port_bindings.json
+  output_path: /app/output/config.generated.json
+  report_path: /app/output/config.generated.report.json
+  output_mode: config_json

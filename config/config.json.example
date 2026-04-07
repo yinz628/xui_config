@@ -1,0 +1,4 @@
+{
+  "copy_from": "../config.json",
+  "note": "Replace this file with the VPS template copied from the real root config.json content."
+}

@@ -1,0 +1,12 @@
+.git
+.pytest_cache
+__pycache__
+cache
+state
+output
+tests
+docs
+310config86-106.yaml
+RH5SFz15rrci.yaml
+config.generated.json
+config.generated.report.json
