@@ -1,6 +1,6 @@
 from pathlib import Path
 from urllib.parse import urlparse
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 from .models import SourceConfig
 
@@ -13,7 +13,8 @@ def fetch_source_to_cache(source: SourceConfig, cache_dir: Path) -> Path:
         source_path = Path(normalize_file_url_path(parsed.path))
         target.write_text(source_path.read_text(encoding="utf-8"), encoding="utf-8")
         return target
-    with urlopen(source.url) as response:
+    request = Request(source.url, headers={"User-Agent": "Mozilla/5.0"})
+    with urlopen(request) as response:
         target.write_bytes(response.read())
     return target
 

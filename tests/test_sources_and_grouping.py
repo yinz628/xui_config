@@ -1,10 +1,14 @@
 from pathlib import Path
 
+from xui_port_pool_generator.models import SourceConfig
 from xui_port_pool_generator.clash_parser import parse_clash_subscription
 from xui_port_pool_generator.grouping import group_nodes
 from xui_port_pool_generator.models import GroupConfig, PortRange
 from xui_port_pool_generator.stable_keys import build_name_affinity_key, build_node_uid
-from xui_port_pool_generator.subscriptions import normalize_file_url_path
+from xui_port_pool_generator.subscriptions import (
+    fetch_source_to_cache,
+    normalize_file_url_path,
+)
 
 
 def test_random_filename_does_not_change_source_identity(tmp_path: Path) -> None:
@@ -77,3 +81,37 @@ def test_normalize_file_url_path_strips_windows_drive_prefix_slash() -> None:
     assert normalize_file_url_path("/F:/x-ui/310config86-106.yaml") == (
         "F:/x-ui/310config86-106.yaml"
     )
+
+
+def test_fetch_source_to_cache_uses_browser_user_agent_for_http(
+    tmp_path: Path, monkeypatch
+) -> None:
+    captured: dict[str, str | None] = {"user_agent": None}
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb) -> None:
+            return None
+
+        def read(self) -> bytes:
+            return b"proxies: []\n"
+
+    def fake_urlopen(request):
+        captured["user_agent"] = request.headers.get("User-agent")
+        return FakeResponse()
+
+    monkeypatch.setattr("xui_port_pool_generator.subscriptions.urlopen", fake_urlopen)
+
+    source = SourceConfig(
+        id="airport_http",
+        url="https://example.com/sub",
+        format="clash",
+        enabled=True,
+    )
+
+    target = fetch_source_to_cache(source, tmp_path)
+
+    assert captured["user_agent"] == "Mozilla/5.0"
+    assert target.read_text(encoding="utf-8") == "proxies: []\n"
