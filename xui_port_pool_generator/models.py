@@ -32,6 +32,7 @@ class RuntimeConfig:
     output_path: str
     report_path: str
     output_mode: str
+    inbound_listen: str | None = "0.0.0.0"
 
 
 @dataclass(frozen=True)

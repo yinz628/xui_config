@@ -28,6 +28,7 @@ DEFAULT_HTTP_HEADER = {
 def render_xray_config(
     template: dict,
     assigned_nodes: list[AssignedNode],
+    inbound_listen: str | None = "0.0.0.0",
 ) -> tuple[dict, list[dict]]:
     api_inbound = next(
         (copy.deepcopy(item) for item in template.get("inbounds", []) if item.get("tag") == "api"),
@@ -54,7 +55,9 @@ def render_xray_config(
     issues: list[dict] = []
 
     for item in assigned_nodes:
-        result["inbounds"].append(build_inbound(item.port, inbound_template))
+        result["inbounds"].append(
+            build_inbound(item.port, inbound_template, listen=inbound_listen)
+        )
         outbound, mode = build_outbound(item.node.raw_proxy)
         result["outbounds"].append(outbound)
         result["routing"]["rules"].append(
@@ -84,12 +87,12 @@ def render_xray_config(
     return result, issues
 
 
-def build_inbound(port: int, template: dict | None) -> dict:
+def build_inbound(port: int, template: dict | None, listen: str | None) -> dict:
     if template:
         inbound = copy.deepcopy(template)
     else:
         inbound = {
-            "listen": "127.0.0.1",
+            "listen": "0.0.0.0",
             "protocol": "socks",
             "settings": {"auth": "noauth", "ip": "127.0.0.1", "udp": True},
             "sniffing": {
@@ -100,7 +103,10 @@ def build_inbound(port: int, template: dict | None) -> dict:
             },
             "streamSettings": None,
         }
-    inbound["listen"] = "127.0.0.1"
+    if listen is None:
+        inbound.pop("listen", None)
+    else:
+        inbound["listen"] = listen
     inbound["port"] = port
     inbound["tag"] = f"inbound-{port}"
     return inbound

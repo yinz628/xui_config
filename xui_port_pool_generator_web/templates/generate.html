@@ -55,6 +55,36 @@
         <span>已加载源数量</span>
       </article>
     </section>
+
+    <section class="panel">
+      <h3>生成文件</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>文件</th>
+            <th>路径</th>
+            <th>下载</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>配置文件</td>
+            <td class="mono">{{ artifacts.config }}</td>
+            <td><a class="download-link" href="/downloads/config">下载</a></td>
+          </tr>
+          <tr>
+            <td>报告文件</td>
+            <td class="mono">{{ artifacts.report }}</td>
+            <td><a class="download-link" href="/downloads/report">下载</a></td>
+          </tr>
+          <tr>
+            <td>状态文件</td>
+            <td class="mono">{{ artifacts.state }}</td>
+            <td><a class="download-link" href="/downloads/state">下载</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </section>
 </main>
 {% endblock %}

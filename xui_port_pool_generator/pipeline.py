@@ -43,7 +43,11 @@ def run_pipeline(mapping_path: Path, template_path: Path, workdir: Path) -> dict
         build_node_uid,
         build_name_affinity_key,
     )
-    config, render_issues = render_xray_config(template, assigned)
+    config, render_issues = render_xray_config(
+        template,
+        assigned,
+        inbound_listen=mapping.runtime.inbound_listen,
+    )
     report = build_report(
         mapping,
         matched,

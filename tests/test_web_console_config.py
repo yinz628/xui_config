@@ -101,3 +101,49 @@ def test_groups_save_rejects_overlapping_ranges(tmp_path: Path) -> None:
 
     assert response.status_code == 400
     assert "overlap" in response.text.lower()
+
+
+def test_sources_delete_removes_selected_source(tmp_path: Path) -> None:
+    settings = create_workspace(tmp_path)
+    client = TestClient(create_app(settings))
+    login(client)
+
+    client.post(
+        "/sources/save",
+        data={
+            "source_id": ["airport_a", "airport_b"],
+            "source_url": ["https://example.com/a", "https://example.com/b"],
+            "source_enabled": ["true", "true"],
+            "source_format": ["clash", "clash"],
+        },
+    )
+
+    response = client.post("/sources/delete", data={"delete_index": "0"})
+    saved = yaml.safe_load(settings.mapping_path.read_text(encoding="utf-8"))
+
+    assert response.status_code == 200 or response.status_code in {302, 303}
+    assert [item["id"] for item in saved["sources"]] == ["airport_b"]
+
+
+def test_groups_delete_removes_selected_group(tmp_path: Path) -> None:
+    settings = create_workspace(tmp_path)
+    client = TestClient(create_app(settings))
+    login(client)
+
+    client.post(
+        "/groups/save",
+        data={
+            "group_name": ["tg_hk", "browser_us"],
+            "group_filter": ["(?i)hk", "(?i)us"],
+            "group_exclude": ["", ""],
+            "group_sources": ["", ""],
+            "group_start": ["20000", "21000"],
+            "group_end": ["20009", "21009"],
+        },
+    )
+
+    response = client.post("/groups/delete", data={"delete_index": "1"})
+    saved = yaml.safe_load(settings.mapping_path.read_text(encoding="utf-8"))
+
+    assert response.status_code == 200 or response.status_code in {302, 303}
+    assert [item["name"] for item in saved["groups"]] == ["tg_hk"]

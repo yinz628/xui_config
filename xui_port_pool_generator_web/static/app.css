@@ -21,6 +21,10 @@ body {
 }
 
 a { color: inherit; text-decoration: none; }
+.download-link {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
 .eyebrow {
   margin: 0 0 8px;
   color: var(--muted);
@@ -94,6 +98,10 @@ button.secondary {
   background: transparent;
   color: var(--accent-strong);
   border: 1px solid var(--line);
+}
+.danger {
+  color: var(--danger);
+  border-color: rgba(155, 61, 43, 0.3);
 }
 button:disabled {
   opacity: 0.55;
@@ -222,6 +230,11 @@ button:disabled {
 .ports-cell {
   white-space: normal;
   word-break: break-all;
+}
+.issue-code {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
 }
 .form-actions {
   margin-top: 18px;

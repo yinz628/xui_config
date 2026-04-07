@@ -58,7 +58,10 @@
         <tbody>
           {% for item in report.get("issues", []) %}
           <tr>
-            <td class="mono">{{ item.get("reason") }}</td>
+            <td>
+              <div>{{ describe_issue_reason(item.get("reason", "")) }}</div>
+              <div class="mono issue-code">{{ item.get("reason") }}</div>
+            </td>
             <td>{{ item.get("group_name", item.get("group", "-")) }}</td>
             <td class="mono">{{ item.get("node_name", item.get("node", "-")) }}</td>
           </tr>

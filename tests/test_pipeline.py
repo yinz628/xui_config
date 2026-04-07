@@ -114,3 +114,94 @@ runtime:
         item["reason"] == "parse_error_invalid_subscription_payload"
         for item in report["issues"]
     )
+
+
+def test_run_pipeline_defaults_inbound_listen_to_all_interfaces(
+    tmp_path: Path,
+) -> None:
+    source_path = tmp_path / "source.yaml"
+    source_path.write_text(
+        """
+proxies:
+  - name: HK 01
+    type: ss
+    server: hk.example.com
+    port: 443
+    cipher: aes-128-gcm
+    password: pw
+""".strip(),
+        encoding="utf-8",
+    )
+    mapping_path = tmp_path / "mapping.yaml"
+    mapping_path.write_text(
+        f"""
+version: 1
+sources:
+  - id: airport_a
+    url: file:///{source_path.as_posix()}
+    format: clash
+groups:
+  - name: tg_hk
+    filter: "(?i)hk"
+    port_range: {{start: 20000, end: 20009}}
+runtime:
+  cache_dir: ./cache/subscriptions
+  state_path: ./state/port_bindings.json
+  output_path: ./config.generated.json
+  report_path: ./config.generated.report.json
+  output_mode: config_json
+""".strip(),
+        encoding="utf-8",
+    )
+
+    run_pipeline(mapping_path, Path(r"F:\x-ui\config.json"), tmp_path)
+    config = json.loads((tmp_path / "config.generated.json").read_text(encoding="utf-8"))
+    inbound = next(item for item in config["inbounds"] if item.get("tag") == "inbound-20000")
+
+    assert inbound["listen"] == "0.0.0.0"
+
+
+def test_run_pipeline_allows_custom_inbound_listen_value(
+    tmp_path: Path,
+) -> None:
+    source_path = tmp_path / "source.yaml"
+    source_path.write_text(
+        """
+proxies:
+  - name: HK 01
+    type: ss
+    server: hk.example.com
+    port: 443
+    cipher: aes-128-gcm
+    password: pw
+""".strip(),
+        encoding="utf-8",
+    )
+    mapping_path = tmp_path / "mapping.yaml"
+    mapping_path.write_text(
+        f"""
+version: 1
+sources:
+  - id: airport_a
+    url: file:///{source_path.as_posix()}
+    format: clash
+groups:
+  - name: tg_hk
+    filter: "(?i)hk"
+    port_range: {{start: 20000, end: 20009}}
+runtime:
+  cache_dir: ./cache/subscriptions
+  state_path: ./state/port_bindings.json
+  output_path: ./config.generated.json
+  report_path: ./config.generated.report.json
+  output_mode: config_json
+  inbound_listen: 192.168.2.195
+""".strip(),
+        encoding="utf-8",
+    )
+
+    run_pipeline(mapping_path, Path(r"F:\x-ui\config.json"), tmp_path)
+    config = json.loads((tmp_path / "config.generated.json").read_text(encoding="utf-8"))
+    inbound = next(item for item in config["inbounds"] if item.get("tag") == "inbound-20000")
+
+    assert inbound["listen"] == "192.168.2.195"

@@ -52,6 +52,7 @@
             <th>来源范围</th>
             <th>起始端口</th>
             <th>结束端口</th>
+            <th>操作</th>
           </tr>
         </thead>
         <tbody id="groups-body">
@@ -63,6 +64,7 @@
             <td><input name="group_sources" value="{{ ','.join(item.get('source_ids', [])) }}"></td>
             <td><input class="port-field" name="group_start" type="number" value="{{ item.get('port_range', {}).get('start') }}"></td>
             <td><input class="port-field" name="group_end" type="number" value="{{ item.get('port_range', {}).get('end') }}"></td>
+            <td><button class="secondary danger" formaction="/groups/delete" type="submit" name="delete_index" value="{{ loop.index0 }}">删除</button></td>
           </tr>
           {% endfor %}
           <tr>
@@ -72,6 +74,7 @@
             <td><input name="group_sources" value=""></td>
             <td><input class="port-field" name="group_start" type="number" value=""></td>
             <td><input class="port-field" name="group_end" type="number" value=""></td>
+            <td><button class="secondary danger" type="button" disabled>删除</button></td>
           </tr>
         </tbody>
       </table>
@@ -89,6 +92,7 @@
         <td><input name="group_sources" value=""></td>
         <td><input class="port-field" name="group_start" type="number" value=""></td>
         <td><input class="port-field" name="group_end" type="number" value=""></td>
+        <td><button class="secondary danger" type="button" disabled>删除</button></td>
       </tr>
     </template>
   </section>

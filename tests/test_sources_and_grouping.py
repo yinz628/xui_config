@@ -70,6 +70,49 @@ proxies:
     assert dropped == []
 
 
+def test_group_nodes_matches_chinese_region_name_with_abbreviation(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "source.yaml"
+    path.write_text(
+        """
+proxies:
+  - name: 香港 IEPL 01
+    type: ss
+    server: hk.example.com
+    port: 443
+    cipher: aes-128-gcm
+    password: pw
+  - name: 美国家宽 01
+    type: ss
+    server: us.example.com
+    port: 443
+    cipher: aes-128-gcm
+    password: pw
+""".strip(),
+        encoding="utf-8",
+    )
+
+    nodes = parse_clash_subscription("airport_a", path)
+    groups = (
+        GroupConfig(
+            name="tg_hk",
+            filter="(?i)hk",
+            port_range=PortRange(20000, 20009),
+        ),
+        GroupConfig(
+            name="browser_us",
+            filter="(?i)(us|usa)",
+            port_range=PortRange(21000, 21009),
+        ),
+    )
+
+    matched, dropped = group_nodes(nodes, groups)
+
+    assert [name for name, _ in matched] == ["tg_hk", "browser_us"]
+    assert dropped == []
+
+
 def test_normalize_file_url_path_preserves_posix_absolute_paths() -> None:
     assert (
         normalize_file_url_path("/app/config/subscriptions/310config86-106.yaml")

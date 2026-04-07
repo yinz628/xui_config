@@ -31,7 +31,14 @@ def load_mapping(path: Path) -> MappingConfig:
         version=raw["version"],
         sources=sources,
         groups=groups,
-        runtime=RuntimeConfig(**raw["runtime"]),
+        runtime=RuntimeConfig(
+            cache_dir=raw["runtime"]["cache_dir"],
+            state_path=raw["runtime"]["state_path"],
+            output_path=raw["runtime"]["output_path"],
+            report_path=raw["runtime"]["report_path"],
+            output_mode=raw["runtime"]["output_mode"],
+            inbound_listen=raw["runtime"].get("inbound_listen", "0.0.0.0"),
+        ),
     )
 
 

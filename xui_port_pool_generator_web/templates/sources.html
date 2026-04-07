@@ -64,6 +64,7 @@
             <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
             <td>
               <button class="secondary" formaction="/sources/check" type="submit" name="check_index" value="{{ loop.index0 }}">立即检测</button>
+              <button class="secondary danger" formaction="/sources/delete" type="submit" name="delete_index" value="{{ loop.index0 }}">删除</button>
             </td>
           </tr>
           {% endfor %}
@@ -79,6 +80,7 @@
             <td><input name="source_format" value="clash"></td>
             <td>
               <button class="secondary" formaction="/sources/check" type="submit" name="check_index" value="{{ mapping.get('sources', [])|length }}">立即检测</button>
+              <button class="secondary danger" type="button" disabled>删除</button>
             </td>
           </tr>
         </tbody>
@@ -143,7 +145,10 @@
           </select>
         </td>
         <td><input name="source_format" value="clash"></td>
-        <td><button class="secondary" type="button" disabled>立即检测</button></td>
+        <td>
+          <button class="secondary" type="button" disabled>立即检测</button>
+          <button class="secondary danger" type="button" disabled>删除</button>
+        </td>
       </tr>
     </template>
   </section>

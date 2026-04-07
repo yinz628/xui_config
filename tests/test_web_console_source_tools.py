@@ -64,6 +64,7 @@ def test_sources_page_contains_check_import_and_node_tools(tmp_path: Path) -> No
 
     assert response.status_code == 200
     assert "立即检测" in response.text
+    assert "删除" in response.text
     assert "导入 YAML 文件" in response.text
     assert "节点数据识别" in response.text
     assert "新增一行" in response.text

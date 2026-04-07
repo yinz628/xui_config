@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, Request, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -23,6 +23,19 @@ from .source_tools import (
     inspect_source_url,
     parse_node_payload,
 )
+
+
+ISSUE_REASON_LABELS = {
+    "group_not_matched": "未命中任何分组规则",
+    "group_capacity_exceeded": "分组端口池已满",
+    "parse_error_invalid_subscription_payload": "订阅内容不是可识别的 Clash 配置",
+    "parse_error_invalid_port": "节点端口字段无效",
+    "parse_error_missing_port": "节点缺少端口字段",
+    "parse_error_missing_name": "节点缺少名称字段",
+    "parse_error_missing_type": "节点缺少类型字段",
+    "parse_error_missing_server": "节点缺少服务器字段",
+    "inferred_obfs": "采用了推断的 obfs 转换",
+}
 
 
 @dataclass(frozen=True)
@@ -142,6 +155,21 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         if auth_redirect:
             return auth_redirect
         _save_sources_from_request(await request.form(), settings)
+        return RedirectResponse(url="/sources?saved=1", status_code=303)
+
+    @app.post("/sources/delete")
+    async def sources_delete(request: Request):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        form = await request.form()
+        index = int(form.get("delete_index", 0))
+        raw = load_mapping_raw(settings.mapping_path)
+        sources = list(raw.get("sources", []))
+        if 0 <= index < len(sources):
+            sources.pop(index)
+        raw["sources"] = sources
+        save_mapping_raw(settings.mapping_path, raw)
         return RedirectResponse(url="/sources?saved=1", status_code=303)
 
     @app.post("/sources/check", response_class=HTMLResponse)
@@ -281,6 +309,21 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
             )
         return RedirectResponse(url="/groups?saved=1", status_code=303)
 
+    @app.post("/groups/delete")
+    async def groups_delete(request: Request):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        form = await request.form()
+        index = int(form.get("delete_index", 0))
+        raw = load_mapping_raw(settings.mapping_path)
+        groups = list(raw.get("groups", []))
+        if 0 <= index < len(groups):
+            groups.pop(index)
+        raw["groups"] = groups
+        save_mapping_raw(settings.mapping_path, raw)
+        return RedirectResponse(url="/groups?saved=1", status_code=303)
+
     @app.get("/generate", response_class=HTMLResponse)
     async def generate_page(request: Request):
         auth_redirect = ensure_authenticated(request)
@@ -295,6 +338,7 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
                 "request": request,
                 "summary": report.get("summary", {}),
                 "generated": request.query_params.get("generated") == "1",
+                "artifacts": build_artifact_paths(settings.workdir, mapping),
             },
         )
 
@@ -330,8 +374,37 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
                 "report": report,
                 "state": state,
                 "state_rows": state_rows,
+                "issue_reason_labels": ISSUE_REASON_LABELS,
+                "describe_issue_reason": describe_issue_reason,
             },
         )
+
+    @app.get("/downloads/config")
+    async def download_config(request: Request):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        mapping = load_mapping_raw(settings.mapping_path)
+        path = resolve_runtime_path(settings.workdir, mapping, "output_path")
+        return FileResponse(path, filename=path.name, media_type="application/json")
+
+    @app.get("/downloads/report")
+    async def download_report(request: Request):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        mapping = load_mapping_raw(settings.mapping_path)
+        path = resolve_runtime_path(settings.workdir, mapping, "report_path")
+        return FileResponse(path, filename=path.name, media_type="application/json")
+
+    @app.get("/downloads/state")
+    async def download_state(request: Request):
+        auth_redirect = ensure_authenticated(request)
+        if auth_redirect:
+            return auth_redirect
+        mapping = load_mapping_raw(settings.mapping_path)
+        path = resolve_runtime_path(settings.workdir, mapping, "state_path")
+        return FileResponse(path, filename=path.name, media_type="application/json")
 
     return app
 
@@ -386,6 +459,23 @@ def resolve_runtime_path(workdir: Path, mapping: dict, key: str) -> Path:
     if runtime_path.is_absolute():
         return runtime_path
     return workdir / runtime_path
+
+
+def build_artifact_paths(workdir: Path, mapping: dict) -> dict[str, str]:
+    return {
+        "config": str(resolve_runtime_path(workdir, mapping, "output_path")),
+        "report": str(resolve_runtime_path(workdir, mapping, "report_path")),
+        "state": str(resolve_runtime_path(workdir, mapping, "state_path")),
+    }
+
+
+def describe_issue_reason(reason: str) -> str:
+    if reason in ISSUE_REASON_LABELS:
+        return ISSUE_REASON_LABELS[reason]
+    if reason.startswith("unsupported_protocol:"):
+        protocol = reason.split(":", 1)[1]
+        return f"暂不支持的协议：{protocol}"
+    return reason
 
 
 app = create_app()

@@ -83,6 +83,9 @@ def test_generate_run_calls_pipeline_and_shows_summary(
     assert response.status_code == 200
     assert "已分配数量" in response.text
     assert "7" in response.text
+    assert "config.generated.json" in response.text
+    assert "config.generated.report.json" in response.text
+    assert "port_bindings.json" in response.text
 
 
 def test_dashboard_save_and_generate_updates_sources_then_runs_pipeline(
@@ -149,5 +152,36 @@ def test_reports_page_reads_report_and_state_files(tmp_path: Path) -> None:
 
     assert response.status_code == 200
     assert "group_not_matched" in response.text
+    assert "未命中任何分组规则" in response.text
     assert "tg_hk" in response.text
     assert "20000" in response.text
+
+
+def test_download_routes_serve_generated_artifacts(tmp_path: Path) -> None:
+    settings = create_workspace(tmp_path)
+    (tmp_path / "output" / "config.generated.json").write_text(
+        '{"inbounds":[]}',
+        encoding="utf-8",
+    )
+    (tmp_path / "output" / "config.generated.report.json").write_text(
+        '{"summary":{"assigned_count":1},"issues":[]}',
+        encoding="utf-8",
+    )
+    (tmp_path / "data" / "state" / "port_bindings.json").write_text(
+        '{"groups":{"tg_hk":{"20000":{"node_uid":"abc"}}}}',
+        encoding="utf-8",
+    )
+
+    client = TestClient(create_app(settings))
+    login(client)
+
+    config_response = client.get("/downloads/config")
+    report_response = client.get("/downloads/report")
+    state_response = client.get("/downloads/state")
+
+    assert config_response.status_code == 200
+    assert report_response.status_code == 200
+    assert state_response.status_code == 200
+    assert "inbounds" in config_response.text
+    assert "assigned_count" in report_response.text
+    assert "tg_hk" in state_response.text
