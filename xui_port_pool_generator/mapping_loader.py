@@ -10,9 +10,15 @@ def load_mapping(path: Path) -> MappingConfig:
     groups = tuple(
         GroupConfig(
             name=item["name"],
-            filter=item["filter"],
+            filter=item.get("filter", ""),
             exclude=item.get("exclude"),
             source_ids=tuple(item.get("source_ids", ())),
+            include_regions=tuple(item.get("include_regions", ())),
+            exclude_regions=tuple(item.get("exclude_regions", ())),
+            manual_include_nodes=tuple(item.get("manual_include_nodes", ())),
+            manual_exclude_nodes=tuple(item.get("manual_exclude_nodes", ())),
+            filter_regex=item.get("filter_regex", ""),
+            exclude_regex=item.get("exclude_regex", ""),
             port_range=PortRange(**item["port_range"]),
         )
         for item in raw["groups"]

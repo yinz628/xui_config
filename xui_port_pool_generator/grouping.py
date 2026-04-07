@@ -2,6 +2,7 @@ import re
 import unicodedata
 
 from .models import GroupConfig, NormalizedNode
+from .stable_keys import build_node_uid
 
 
 REGION_ALIAS_MAP: tuple[tuple[tuple[str, ...], tuple[str, ...]], ...] = (
@@ -28,10 +29,15 @@ def group_nodes(
     for node in nodes:
         selected_group: str | None = None
         match_text = build_match_text(node.display_name)
+        node_uid = build_node_uid(node)
+        region_tags = derive_region_tags(node.display_name)
         for group in groups:
-            if not re.search(group.filter, match_text):
-                continue
-            if group.exclude and re.search(group.exclude, match_text):
+            if not node_matches_group(
+                node_uid=node_uid,
+                region_tags=region_tags,
+                match_text=match_text,
+                group=group,
+            ):
                 continue
             selected_group = group.name
             break
@@ -51,3 +57,44 @@ def build_match_text(display_name: str) -> str:
     if not aliases:
         return display_name
     return f"{display_name}\n{' '.join(sorted(set(aliases)))}"
+
+
+def derive_region_tags(display_name: str) -> list[str]:
+    normalized = unicodedata.normalize("NFKC", display_name).lower()
+    tags: list[str] = []
+    for keys, alias_values in REGION_ALIAS_MAP:
+        if any(key.lower() in normalized for key in keys):
+            tags.append(alias_values[0])
+    return sorted(set(tags))
+
+
+def node_matches_group(
+    *,
+    node_uid: str,
+    region_tags: list[str],
+    match_text: str,
+    group: GroupConfig,
+) -> bool:
+    if node_uid in group.manual_exclude_nodes:
+        return False
+
+    if node_uid in group.manual_include_nodes:
+        return True
+
+    if group.include_regions:
+        if not set(region_tags).intersection(group.include_regions):
+            return False
+
+    if group.exclude_regions:
+        if set(region_tags).intersection(group.exclude_regions):
+            return False
+
+    filter_pattern = group.filter_regex or group.filter
+    if filter_pattern and not re.search(filter_pattern, match_text):
+        return False
+
+    exclude_pattern = group.exclude_regex or group.exclude
+    if exclude_pattern and re.search(exclude_pattern, match_text):
+        return False
+
+    return True

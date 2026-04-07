@@ -51,7 +51,7 @@ docker compose up -d web
 Open:
 
 ```text
-http://<server-ip>:8000/login
+http://<server-ip>:18080/login
 ```
 
 ## Check Results
@@ -67,7 +67,7 @@ sed -n '1,80p' /opt/xui-config/output/config.generated.report.json
 ```bash
 cd /opt/xui-config
 docker compose ps
-curl -I http://127.0.0.1:8000/login
+curl -I http://127.0.0.1:18080/login
 ```
 
 ## Smoke

@@ -28,7 +28,7 @@ services:
       - --host
       - 0.0.0.0
       - --port
-      - "8000"
+      - "18080"
     env_file:
       - .env
     environment:
@@ -36,7 +36,7 @@ services:
       WEB_TEMPLATE_PATH: /app/config/config.json
       WEB_WORKDIR: /app
     ports:
-      - "8000:8000"
+      - "18080:18080"
     volumes:
       - ./config:/app/config
       - ./data/cache:/app/cache

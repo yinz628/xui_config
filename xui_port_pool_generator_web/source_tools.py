@@ -1,9 +1,6 @@
-import base64
-import json
 import re
 import tempfile
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
 
 import yaml
 from fastapi import UploadFile
@@ -11,6 +8,8 @@ from fastapi import UploadFile
 from xui_port_pool_generator.clash_parser import parse_clash_subscription_with_issues
 from xui_port_pool_generator.models import SourceConfig
 from xui_port_pool_generator.subscriptions import fetch_source_to_cache
+
+from .node_payloads import extract_proxies_from_payload
 
 
 def inspect_source_url(url: str, source_format: str) -> dict:
@@ -41,58 +40,42 @@ def import_yaml_source(
     upload_file: UploadFile,
     config_dir: Path,
     existing_ids: set[str],
+    source_name: str = "",
 ) -> dict:
     if not upload_file.filename:
         raise ValueError("未选择文件")
 
-    imports_dir = config_dir / "imports"
-    imports_dir.mkdir(parents=True, exist_ok=True)
-    safe_name = _sanitize_filename(upload_file.filename)
-    target_path = imports_dir / safe_name
-    content = upload_file.file.read()
-    target_path.write_bytes(content)
+    source_id = _resolve_source_id(source_name, existing_ids)
+    target_path = _import_path(config_dir, source_id)
+    target_path.write_bytes(upload_file.file.read())
+    return _build_import_result(source_id, target_path)
 
-    nodes, issues = parse_clash_subscription_with_issues("import", target_path)
-    if not nodes:
-        target_path.unlink(missing_ok=True)
-        reason = issues[0]["reason"] if issues else "未识别到节点"
-        raise ValueError(f"导入失败：{reason}")
 
-    source_id = _next_import_source_id(existing_ids)
-    return {
-        "source": {
-            "id": source_id,
-            "url": path_to_file_url(target_path),
-            "enabled": True,
-            "format": "clash",
-        },
-        "node_count": len(nodes),
-    }
+def import_node_payload_source(
+    text: str,
+    config_dir: Path,
+    existing_ids: set[str],
+    source_name: str = "",
+) -> dict:
+    proxies = extract_proxies_from_payload(text)
+    if not proxies:
+        raise ValueError("未识别到节点")
+
+    source_id = _resolve_source_id(source_name, existing_ids)
+    target_path = _import_path(config_dir, source_id)
+    target_path.write_text(
+        yaml.safe_dump(
+            {"proxies": proxies},
+            allow_unicode=True,
+            sort_keys=False,
+        ),
+        encoding="utf-8",
+    )
+    return _build_import_result(source_id, target_path)
 
 
 def parse_node_payload(text: str) -> list[dict]:
-    payload = text.strip()
-    if not payload:
-        return []
-
-    decoded_payload = _maybe_decode_subscription_blob(payload)
-    yaml_obj = yaml.safe_load(decoded_payload)
-    if isinstance(yaml_obj, dict) and isinstance(yaml_obj.get("proxies"), list):
-        return [
-            _proxy_preview(proxy)
-            for proxy in yaml_obj["proxies"]
-            if isinstance(proxy, dict)
-        ]
-
-    previews: list[dict] = []
-    for line in decoded_payload.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        preview = _parse_uri_line(line)
-        if preview:
-            previews.append(preview)
-    return previews
+    return [_proxy_preview(proxy) for proxy in extract_proxies_from_payload(text)]
 
 
 def path_to_file_url(path: Path) -> str:
@@ -102,8 +85,51 @@ def path_to_file_url(path: Path) -> str:
     return f"file://{resolved}"
 
 
+def _build_import_result(source_id: str, target_path: Path) -> dict:
+    nodes, issues = parse_clash_subscription_with_issues(source_id, target_path)
+    if not nodes:
+        target_path.unlink(missing_ok=True)
+        reason = issues[0]["reason"] if issues else "未识别到节点"
+        raise ValueError(f"导入失败：{reason}")
+
+    return {
+        "source": {
+            "id": source_id,
+            "url": path_to_file_url(target_path),
+            "enabled": True,
+            "format": "clash",
+        },
+        "node_count": len(nodes),
+        "node_preview": [_proxy_preview(node.raw_proxy) for node in nodes],
+        "nodes": nodes,
+    }
+
+
+def _import_path(config_dir: Path, source_id: str) -> Path:
+    imports_dir = config_dir / "imports"
+    imports_dir.mkdir(parents=True, exist_ok=True)
+    return imports_dir / f"{_sanitize_filename(source_id)}.yaml"
+
+
+def _resolve_source_id(source_name: str, existing_ids: set[str]) -> str:
+    normalized = _sanitize_source_name(source_name)
+    if normalized:
+        if normalized in existing_ids:
+            raise ValueError(f"来源名称已存在：{normalized}")
+        return normalized
+    return _next_import_source_id(existing_ids)
+
+
+def _sanitize_source_name(name: str) -> str:
+    normalized = re.sub(r"\s+", "_", name.strip())
+    normalized = re.sub(r"[^\w.-]", "_", normalized, flags=re.UNICODE)
+    normalized = normalized.strip("._-")
+    return normalized
+
+
 def _sanitize_filename(name: str) -> str:
-    return re.sub(r"[^A-Za-z0-9._-]", "-", name)
+    sanitized = _sanitize_source_name(name)
+    return sanitized or "imported_source"
 
 
 def _next_import_source_id(existing_ids: set[str]) -> str:
@@ -122,49 +148,3 @@ def _proxy_preview(proxy: dict) -> dict:
         "server": proxy.get("server", "-"),
         "port": str(proxy.get("port", "-")),
     }
-
-
-def _parse_uri_line(line: str) -> dict | None:
-    if line.startswith("vmess://"):
-        try:
-            encoded = line[len("vmess://") :]
-            encoded += "=" * (-len(encoded) % 4)
-            payload = json.loads(base64.b64decode(encoded).decode("utf-8"))
-            return {
-                "name": payload.get("ps", "<vmess>"),
-                "type": "vmess",
-                "server": payload.get("add", "-"),
-                "port": str(payload.get("port", "-")),
-            }
-        except Exception:  # noqa: BLE001
-            return {"name": "<vmess>", "type": "vmess", "server": "-", "port": "-"}
-
-    if line.startswith(("vless://", "trojan://", "ss://", "socks5://")):
-        parsed = urlsplit(line)
-        return {
-            "name": unquote(parsed.fragment) or parsed.scheme,
-            "type": parsed.scheme,
-            "server": parsed.hostname or "-",
-            "port": str(parsed.port or "-"),
-        }
-
-    return None
-
-
-def _maybe_decode_subscription_blob(payload: str) -> str:
-    compact = payload.strip()
-    if "\n" in compact:
-        return compact
-    if not re.fullmatch(r"[A-Za-z0-9+/=]+", compact):
-        return compact
-    try:
-        padded = compact + "=" * (-len(compact) % 4)
-        decoded = base64.b64decode(padded).decode("utf-8")
-    except Exception:  # noqa: BLE001
-        return compact
-    if any(
-        marker in decoded
-        for marker in ("vmess://", "vless://", "trojan://", "ss://", "proxies:")
-    ):
-        return decoded
-    return compact

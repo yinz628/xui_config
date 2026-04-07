@@ -37,9 +37,9 @@ def test_compose_includes_web_service_with_port_and_shared_mounts() -> None:
         "--host",
         "0.0.0.0",
         "--port",
-        "8000",
+        "18080",
     ]
-    assert "8000:8000" in service["ports"]
+    assert "18080:18080" in service["ports"]
     assert "./config:/app/config" in service["volumes"]
     assert "./data/cache:/app/cache" in service["volumes"]
     assert "./data/state:/app/state" in service["volumes"]

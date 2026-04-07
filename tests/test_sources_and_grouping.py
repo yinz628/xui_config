@@ -1,9 +1,8 @@
 from pathlib import Path
 
-from xui_port_pool_generator.models import SourceConfig
+from xui_port_pool_generator.models import GroupConfig, NormalizedNode, PortRange, SourceConfig
 from xui_port_pool_generator.clash_parser import parse_clash_subscription
 from xui_port_pool_generator.grouping import group_nodes
-from xui_port_pool_generator.models import GroupConfig, PortRange
 from xui_port_pool_generator.stable_keys import build_name_affinity_key, build_node_uid
 from xui_port_pool_generator.subscriptions import (
     fetch_source_to_cache,
@@ -110,6 +109,62 @@ proxies:
     matched, dropped = group_nodes(nodes, groups)
 
     assert [name for name, _ in matched] == ["tg_hk", "browser_us"]
+    assert dropped == []
+
+
+def test_manual_exclude_beats_region_and_regex() -> None:
+    node = NormalizedNode(
+        source_id="airport_a",
+        source_path=Path("snapshot.yaml"),
+        display_name="香港 IEPL 01",
+        protocol="ss",
+        server="hk.example.com",
+        server_port=443,
+        raw_proxy={"name": "香港 IEPL 01", "type": "ss", "server": "hk.example.com", "port": 443, "cipher": "aes-128-gcm", "password": "pw"},
+    )
+    node_uid = build_node_uid(node)
+    groups = (
+        GroupConfig(
+            name="tg_hk",
+            filter="",
+            filter_regex="(?i)IEPL",
+            include_regions=("hk",),
+            manual_exclude_nodes=(node_uid,),
+            port_range=PortRange(20000, 20009),
+        ),
+    )
+
+    matched, dropped = group_nodes([node], groups)
+
+    assert matched == []
+    assert dropped[0]["reason"] == "group_not_matched"
+
+
+def test_manual_include_beats_region_exclude() -> None:
+    node = NormalizedNode(
+        source_id="airport_a",
+        source_path=Path("snapshot.yaml"),
+        display_name="台湾 家宽 01",
+        protocol="ss",
+        server="tw.example.com",
+        server_port=443,
+        raw_proxy={"name": "台湾 家宽 01", "type": "ss", "server": "tw.example.com", "port": 443, "cipher": "aes-128-gcm", "password": "pw"},
+    )
+    node_uid = build_node_uid(node)
+    groups = (
+        GroupConfig(
+            name="tg_hk",
+            filter="",
+            include_regions=("tw",),
+            exclude_regions=("tw",),
+            manual_include_nodes=(node_uid,),
+            port_range=PortRange(20000, 20009),
+        ),
+    )
+
+    matched, dropped = group_nodes([node], groups)
+
+    assert [name for name, _ in matched] == ["tg_hk"]
     assert dropped == []
 
 
