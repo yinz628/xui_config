@@ -4,6 +4,9 @@ import json
 import yaml
 from fastapi.testclient import TestClient
 
+from xui_port_pool_generator.models import NormalizedNode
+from xui_port_pool_generator.pipeline import run_pipeline
+from xui_port_pool_generator.stable_keys import build_node_uid
 from xui_port_pool_generator_web.app import AppSettings, create_app
 
 
@@ -324,3 +327,76 @@ proxies:
 
     assert response.status_code == 200 or response.status_code in {302, 303}
     assert [item["source_id"] for item in snapshot["items"]] == ["airport_b"]
+
+
+def test_groups_save_preserves_builder_overrides_for_port_assignment(
+    tmp_path: Path,
+) -> None:
+    settings = create_workspace(tmp_path)
+    source_path = tmp_path / "source.yaml"
+    node_uid = build_node_uid(
+        NormalizedNode(
+            source_id="airport_a",
+            source_path=source_path,
+            display_name="HK BASE",
+            protocol="ss",
+            server="hk-base.example.com",
+            server_port=443,
+            raw_proxy={
+                "name": "HK BASE",
+                "type": "ss",
+                "server": "hk-base.example.com",
+                "port": 443,
+                "cipher": "aes-128-gcm",
+                "password": "pw",
+            },
+        )
+    )
+    settings.mapping_path.write_text(
+        f"""
+version: 1
+sources:
+  - id: airport_a
+    url: file:///{source_path.as_posix()}
+    enabled: true
+    format: clash
+groups:
+  - name: tg_hk
+    filter: "(?i)nomatch"
+    manual_include_nodes:
+      - {node_uid}
+    port_range:
+      start: 20000
+      end: 20009
+runtime:
+  cache_dir: ./cache/subscriptions
+  state_path: ./data/state/port_bindings.json
+  output_path: ./output/config.generated.json
+  report_path: ./output/config.generated.report.json
+  output_mode: config_json
+""".strip(),
+        encoding="utf-8",
+    )
+
+    client = TestClient(create_app(settings))
+    login(client)
+
+    response = client.post(
+        "/groups/save",
+        data={
+            "group_name": ["tg_hk"],
+            "group_filter": ["(?i)nomatch"],
+            "group_exclude": [""],
+            "group_sources": [""],
+            "group_start": ["20000"],
+            "group_end": ["20009"],
+        },
+        follow_redirects=False,
+    )
+
+    saved = yaml.safe_load(settings.mapping_path.read_text(encoding="utf-8"))
+    result = run_pipeline(settings.mapping_path, settings.template_path, settings.workdir)
+
+    assert response.status_code in {302, 303}
+    assert saved["groups"][0]["manual_include_nodes"] == [node_uid]
+    assert result["summary"]["assigned_count"] == 1

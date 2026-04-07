@@ -807,6 +807,7 @@ def _source_from_form_index(form, index: int) -> dict:
 
 def _mapping_from_groups_form(form, settings: AppSettings) -> dict:
     raw = load_mapping_raw(settings.mapping_path)
+    existing_groups = list(raw.get("groups", []))
     names = form.getlist("group_name")
     filters = form.getlist("group_filter")
     excludes = form.getlist("group_exclude")
@@ -815,25 +816,37 @@ def _mapping_from_groups_form(form, settings: AppSettings) -> dict:
     ends = form.getlist("group_end")
     groups: list[dict] = []
     for idx, name in enumerate(names):
-        if not name.strip():
+        stripped_name = name.strip()
+        if not stripped_name:
             continue
         start_text = starts[idx].strip()
         end_text = ends[idx].strip()
         if not start_text or not end_text:
             raise ValueError(f"分组 {name.strip()} 缺少端口范围，请填写起始端口和结束端口。")
-        group_payload = {
-            "name": name.strip(),
+        preserved_group = next(
+            (item for item in existing_groups if item.get("name") == stripped_name),
+            None,
+        )
+        if preserved_group is None and idx < len(existing_groups):
+            preserved_group = existing_groups[idx]
+        group_payload = dict(preserved_group or {})
+        group_payload.update({
+            "name": stripped_name,
             "filter": filters[idx].strip(),
             "port_range": {
                 "start": int(start_text),
                 "end": int(end_text),
             },
-        }
+        })
         if excludes[idx].strip():
             group_payload["exclude"] = excludes[idx].strip()
+        else:
+            group_payload.pop("exclude", None)
         source_ids = [item.strip() for item in sources[idx].split(",") if item.strip()]
         if source_ids:
             group_payload["source_ids"] = source_ids
+        else:
+            group_payload.pop("source_ids", None)
         groups.append(group_payload)
     raw["groups"] = groups
     return raw
