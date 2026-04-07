@@ -34,3 +34,14 @@ def test_vps_mapping_example_uses_container_runtime_paths() -> None:
     assert mapping["runtime"]["state_path"] == "/app/state/port_bindings.json"
     assert mapping["runtime"]["output_path"] == "/app/output/config.generated.json"
     assert mapping["runtime"]["report_path"] == "/app/output/config.generated.report.json"
+
+
+def test_config_json_example_is_a_real_template_shape() -> None:
+    import json
+
+    template = json.loads(
+        (ROOT / "config" / "config.json.example").read_text(encoding="utf-8")
+    )
+
+    assert "inbounds" in template
+    assert "outbounds" in template

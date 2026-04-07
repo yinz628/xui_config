@@ -1,4 +1,1131 @@
 {
-  "copy_from": "../config.json",
-  "note": "Replace this file with the VPS template copied from the real root config.json content."
+  "api": {
+    "services": [
+      "HandlerService",
+      "LoggerService",
+      "StatsService"
+    ],
+    "tag": "api"
+  },
+  "burstObservatory": null,
+  "dns": null,
+  "fakedns": null,
+  "inbounds": [
+    {
+      "listen": "127.0.0.1",
+      "port": 62789,
+      "protocol": "tunnel",
+      "settings": {
+        "address": "127.0.0.1"
+      },
+      "sniffing": null,
+      "streamSettings": null,
+      "tag": "api"
+    },
+    {
+      "listen": null,
+      "port": 18800,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18800"
+    },
+    {
+      "listen": null,
+      "port": 18801,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18801"
+    },
+    {
+      "listen": null,
+      "port": 18802,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": false,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18802"
+    },
+    {
+      "listen": null,
+      "port": 18803,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18803"
+    },
+    {
+      "listen": null,
+      "port": 18804,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18804"
+    },
+    {
+      "listen": null,
+      "port": 18805,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18805"
+    },
+    {
+      "listen": null,
+      "port": 18806,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18806"
+    },
+    {
+      "listen": null,
+      "port": 18807,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18807"
+    },
+    {
+      "listen": null,
+      "port": 18808,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18808"
+    },
+    {
+      "listen": null,
+      "port": 18809,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18809"
+    },
+    {
+      "listen": null,
+      "port": 18810,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18810"
+    },
+    {
+      "listen": null,
+      "port": 18811,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18811"
+    },
+    {
+      "listen": null,
+      "port": 18812,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18812"
+    },
+    {
+      "listen": null,
+      "port": 18813,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18813"
+    },
+    {
+      "listen": null,
+      "port": 18814,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18814"
+    },
+    {
+      "listen": null,
+      "port": 18815,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18815"
+    },
+    {
+      "listen": null,
+      "port": 18816,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18816"
+    },
+    {
+      "listen": null,
+      "port": 18817,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18817"
+    },
+    {
+      "listen": null,
+      "port": 18818,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18818"
+    },
+    {
+      "listen": null,
+      "port": 18819,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18819"
+    },
+    {
+      "listen": null,
+      "port": 18820,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "ip": "127.0.0.1",
+        "udp": true
+      },
+      "sniffing": {
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "enabled": true,
+        "metadataOnly": false,
+        "routeOnly": false
+      },
+      "streamSettings": null,
+      "tag": "inbound-18820"
+    }
+  ],
+  "log": {
+    "access": "./access.log",
+    "dnsLog": true,
+    "error": "./error.log",
+    "loglevel": "debug",
+    "maskAddress": ""
+  },
+  "metrics": {
+    "listen": "127.0.0.1:11111",
+    "tag": "metrics_out"
+  },
+  "observatory": null,
+  "outbounds": [
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "us-f.feimails.com",
+            "port": 28180,
+            "users": [
+              {
+                "encryption": "none",
+                "flow": "",
+                "id": "edfd55ce-789f-4c79-866b-b86667d265dd"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "",
+          "serverName": "us-f.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "us-f.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "us-f-vle-29905"
+    },
+    {
+      "protocol": "shadowsocks",
+      "settings": {
+        "servers": [
+          {
+            "address": "jpacc-e.feimails.com",
+            "method": "2022-blake3-aes-128-gcm",
+            "password": "Vat/i8FOpQDD+GIPsV6qRA==:hgRceNyUH/v/FZOGcyuYuQ==",
+            "port": 20056,
+            "uot": true
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "none",
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          }
+        }
+      },
+      "tag": "jklsmirb-29911"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkwa-d8v4.feimails.com",
+            "port": 8443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "b00ca549-f8b9-43a5-911a-6c3f050aa58d"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkwa-d8v4.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkwa-d8v4.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-wa-d8-vle-29904"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkbn2.feimails.com",
+            "port": 2096,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "cc708062-a486-4491-87a7-fd2c250413be"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkbn2.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkbn2.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-wa-d7-vle-29900"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hk-z.feimails.com",
+            "port": 38887,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "260fc88c-8f08-43db-9509-cbc19654f9bf"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hk-z.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hk-z.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "TW-wa-d6-vle"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkwa-d5v6.feimails.com",
+            "port": 8443,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "7a46118b-42b2-4e59-9b9a-a0823726fa95"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkwa-d5v6.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkwa-d5v6.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-wa-d5-vle-29903"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkwa-d4v6.feimails.com",
+            "port": 2096,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "95b475a7-4e23-433e-83cd-a55f27a8e2e6"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkwa-d4v6.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkwa-d4v6.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-wa-d4-vle-29902"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkwa-d3v6.feimails.com",
+            "port": 2096,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "b5a2021f-df94-41a9-b36c-975f75907eac"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkwa-d3v6.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkwa-d3v6.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-wa-d3-vle-29901"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "us-t.feimails.com",
+            "port": 20053,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "68809ca7-7cbb-4dd7-f073-6a960ef1f500"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "us-t.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "us-t.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "US-vle"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkg2-aki.feimails.com",
+            "port": 29570,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "f29f3739-87f5-45cf-921d-b2d386d1afc1"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkg2-aki.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkg2-aki.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-aki-vle"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkbage.feimails.com",
+            "port": 2096,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "7245ef5a-f7f1-4e88-835c-c1c4dda78e23"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkbage.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkbage.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-bage-vle"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkwa-d1v6-384.feimails.com",
+            "port": 2097,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "dc71aff0-fa8c-4ce6-d590-739e2081dd95"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkwa-d1v6-384.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkwa-d1v6-384.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-wa-d1-vle"
+    },
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "hkwa-d2.feimails.com",
+            "port": 2096,
+            "users": [
+              {
+                "encryption": "none",
+                "id": "b79a355d-f8a8-4a8f-980c-aae7d5482c45"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "echConfigList": "",
+          "fingerprint": "chrome",
+          "serverName": "hkwa-d2.feimails.com"
+        },
+        "wsSettings": {
+          "heartbeatPeriod": 0,
+          "host": "hkwa-d2.feimails.com",
+          "path": "/"
+        }
+      },
+      "tag": "hk-wa-d2-vle"
+    },
+    {
+      "protocol": "freedom",
+      "settings": {
+        "domainStrategy": "AsIs",
+        "noises": [],
+        "redirect": ""
+      },
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "blocked"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "api"
+    },
+    {
+      "protocol": "wireguard",
+      "settings": {
+        "address": [
+          "172.16.0.2/32",
+          "2606:4700:110:8458:c3f4:1148:395a:2fe0/128"
+        ],
+        "domainStrategy": "ForceIP",
+        "mtu": 1420,
+        "noKernelTun": false,
+        "peers": [
+          {
+            "allowedIPs": [
+              "0.0.0.0/0",
+              "::/0"
+            ],
+            "endpoint": "engage.cloudflareclient.com:2408",
+            "keepAlive": 0,
+            "publicKey": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo="
+          }
+        ],
+        "reserved": [
+          223,
+          36,
+          106
+        ],
+        "secretKey": "CHTPSKt+OYfYP8yZm5hwwOWOiZCDVwhg/zaD4tesBVY=",
+        "workers": 2
+      },
+      "tag": "warp"
+    }
+  ],
+  "policy": {
+    "levels": {
+      "0": {
+        "connIdle": 300,
+        "downlinkOnly": 0,
+        "handshake": 4,
+        "statsUserDownlink": true,
+        "statsUserOnline": true,
+        "statsUserUplink": true,
+        "uplinkOnly": 0
+      }
+    },
+    "system": {
+      "statsInboundDownlink": true,
+      "statsInboundUplink": true,
+      "statsOutboundDownlink": true,
+      "statsOutboundUplink": true
+    }
+  },
+  "reverse": null,
+  "routing": {
+    "domainStrategy": "AsIs",
+    "rules": [
+      {
+        "inboundTag": [
+          "inbound-18805"
+        ],
+        "outboundTag": "us-f-vle-29905",
+        "type": "field"
+      },
+      {
+        "inboundTag": [
+          "inbound-18800"
+        ],
+        "outboundTag": "hk-wa-d7-vle-29900",
+        "type": "field"
+      },
+      {
+        "inboundTag": [
+          "inbound-18801"
+        ],
+        "outboundTag": "hk-wa-d3-vle-29901",
+        "type": "field"
+      },
+      {
+        "inboundTag": [
+          "inbound-18802"
+        ],
+        "outboundTag": "hk-wa-d4-vle-29902",
+        "type": "field"
+      },
+      {
+        "inboundTag": [
+          "inbound-18803"
+        ],
+        "outboundTag": "hk-wa-d5-vle-29903",
+        "type": "field"
+      },
+      {
+        "inboundTag": [
+          "inbound-18804"
+        ],
+        "outboundTag": "hk-wa-d8-vle-29904",
+        "type": "field"
+      },
+      {
+        "inboundTag": [
+          "api"
+        ],
+        "outboundTag": "api",
+        "type": "field"
+      },
+      {
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "blocked",
+        "type": "field"
+      },
+      {
+        "outboundTag": "blocked",
+        "protocol": [
+          "bittorrent"
+        ],
+        "type": "field"
+      }
+    ]
+  },
+  "stats": {},
+  "transport": null
 }
