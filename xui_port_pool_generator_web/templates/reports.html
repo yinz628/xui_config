@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="app-shell">
+  <aside class="sidebar">
+    <div>
+      <p class="eyebrow">Data-First</p>
+      <h1>X-UI Console</h1>
+    </div>
+    <nav class="nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/sources">Sources</a>
+      <a href="/groups">Groups</a>
+      <a href="/generate">Generate</a>
+      <a class="active" href="/reports">Reports</a>
+    </nav>
+    <form method="post" action="/logout">
+      <button class="secondary" type="submit">Sign Out</button>
+    </form>
+  </aside>
+
+  <section class="content">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Reports</p>
+        <h2>Latest Report and State</h2>
+        <p class="subtitle">Inspect the latest generated report summary, issue list, and port bindings per group.</p>
+      </div>
+    </header>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <p class="eyebrow">Assigned Count</p>
+        <strong>{{ report.get("summary", {}).get("assigned_count", 0) }}</strong>
+        <span>Ports assigned</span>
+      </article>
+      <article class="summary-card">
+        <p class="eyebrow">Issue Count</p>
+        <strong>{{ report.get("summary", {}).get("issue_count", 0) }}</strong>
+        <span>Reported issues</span>
+      </article>
+      <article class="summary-card">
+        <p class="eyebrow">State Groups</p>
+        <strong>{{ state.get("groups", {})|length }}</strong>
+        <span>Groups with bindings</span>
+      </article>
+    </section>
+
+    <section class="panel">
+      <h3>Issues</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Reason</th>
+            <th>Group</th>
+            <th>Node</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in report.get("issues", []) %}
+          <tr>
+            <td class="mono">{{ item.get("reason") }}</td>
+            <td>{{ item.get("group_name", item.get("group", "-")) }}</td>
+            <td class="mono">{{ item.get("node_name", item.get("node", "-")) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h3>State Groups</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>Bindings</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for group_name, bindings in state.get("groups", {}).items() %}
+          <tr>
+            <td>{{ group_name }}</td>
+            <td>{{ bindings|length }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </section>
+</main>
+{% endblock %}

@@ -38,12 +38,35 @@ cd /opt/xui-config
 docker compose run --rm generator
 ```
 
+## Start Web Console
+
+```bash
+cd /opt/xui-config
+cp .env.example .env
+# edit WEB_ADMIN_PASSWORD and WEB_SESSION_SECRET first
+docker compose up -d web
+```
+
+Open:
+
+```text
+http://<server-ip>:8000/login
+```
+
 ## Check Results
 
 ```bash
 ls -lah /opt/xui-config/output
 ls -lah /opt/xui-config/data/state
 sed -n '1,80p' /opt/xui-config/output/config.generated.report.json
+```
+
+## Check Web
+
+```bash
+cd /opt/xui-config
+docker compose ps
+curl -I http://127.0.0.1:8000/login
 ```
 
 ## Smoke

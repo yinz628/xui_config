@@ -10,5 +10,6 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 COPY generate_xray_config.py /app/generate_xray_config.py
 COPY xui_port_pool_generator /app/xui_port_pool_generator
+COPY xui_port_pool_generator_web /app/xui_port_pool_generator_web
 
 CMD ["python", "generate_xray_config.py", "--mapping", "/app/config/mapping.yaml", "--template", "/app/config/config.json"]

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="app-shell">
+  <aside class="sidebar">
+    <div>
+      <p class="eyebrow">Data-First</p>
+      <h1>X-UI Console</h1>
+    </div>
+    <nav class="nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/sources">Sources</a>
+      <a href="/groups">Groups</a>
+      <a class="active" href="/generate">Generate</a>
+      <a href="/reports">Reports</a>
+    </nav>
+    <form method="post" action="/logout">
+      <button class="secondary" type="submit">Sign Out</button>
+    </form>
+  </aside>
+
+  <section class="content">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Generate</p>
+        <h2>Run Generator</h2>
+        <p class="subtitle">Trigger one pipeline run against the current mapping and inspect the latest summary.</p>
+      </div>
+    </header>
+
+    {% if generated %}
+    <div class="success-banner">Generation finished.</div>
+    {% endif %}
+
+    <section class="panel">
+      <h3>Run Action</h3>
+      <form method="post" action="/generate/run">
+        <button type="submit">Generate Now</button>
+      </form>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <p class="eyebrow">Assigned Count</p>
+        <strong>{{ summary.get("assigned_count", 0) }}</strong>
+        <span>Ports assigned</span>
+      </article>
+      <article class="summary-card">
+        <p class="eyebrow">Issue Count</p>
+        <strong>{{ summary.get("issue_count", 0) }}</strong>
+        <span>Reported issues</span>
+      </article>
+      <article class="summary-card">
+        <p class="eyebrow">Sources</p>
+        <strong>{{ summary.get("source_count", 0) }}</strong>
+        <span>Loaded sources</span>
+      </article>
+    </section>
+  </section>
+</main>
+{% endblock %}

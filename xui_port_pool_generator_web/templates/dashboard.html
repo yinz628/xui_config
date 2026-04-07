@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="app-shell">
+  <aside class="sidebar">
+    <div>
+      <p class="eyebrow">Data-First</p>
+      <h1>X-UI Console</h1>
+    </div>
+    <nav class="nav">
+      <a class="active" href="/dashboard">Dashboard</a>
+      <a href="/sources">Sources</a>
+      <a href="/groups">Groups</a>
+      <a href="/generate">Generate</a>
+      <a href="/reports">Reports</a>
+    </nav>
+    <form method="post" action="/logout">
+      <button class="secondary" type="submit">Sign Out</button>
+    </form>
+  </aside>
+
+  <section class="content">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Dashboard</p>
+        <h2>Sources Quick Edit</h2>
+        <p class="subtitle">Edit your subscription sources from the main workspace, then save or generate from here.</p>
+      </div>
+    </header>
+
+    {% if saved %}
+    <div class="success-banner">Dashboard sources saved.</div>
+    {% endif %}
+
+    <section class="panel">
+      <h3>Sources</h3>
+      <form method="post">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>URL</th>
+              <th>Enabled</th>
+              <th>Format</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in mapping.get("sources", []) %}
+            <tr>
+              <td><input name="source_id" value="{{ item.get('id') }}"></td>
+              <td><input class="mono" name="source_url" value="{{ item.get('url') }}"></td>
+              <td>
+                <select name="source_enabled">
+                  <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>true</option>
+                  <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>false</option>
+                </select>
+              </td>
+              <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="form-actions hero-actions">
+          <button class="secondary" formaction="/dashboard/sources/save" type="submit">Save</button>
+          <button formaction="/dashboard/sources/save-and-generate" type="submit">Save and Generate</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="summary-grid">
+      <article class="summary-card">
+        <p class="eyebrow">Last Report</p>
+        <strong>{{ report_summary.get("assigned_count", 0) }}</strong>
+        <span>Assigned ports</span>
+      </article>
+      <article class="summary-card">
+        <p class="eyebrow">Issues</p>
+        <strong>{{ report_summary.get("issue_count", 0) }}</strong>
+        <span>Reported problems</span>
+      </article>
+      <article class="summary-card">
+        <p class="eyebrow">State Groups</p>
+        <strong>{{ state_groups|length }}</strong>
+        <span>Groups with bindings</span>
+      </article>
+    </section>
+  </section>
+</main>
+{% endblock %}

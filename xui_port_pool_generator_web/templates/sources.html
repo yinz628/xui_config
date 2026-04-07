@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="app-shell">
+  <aside class="sidebar">
+    <div>
+      <p class="eyebrow">Data-First</p>
+      <h1>X-UI Console</h1>
+    </div>
+    <nav class="nav">
+      <a href="/dashboard">Dashboard</a>
+      <a class="active" href="/sources">Sources</a>
+      <a href="/groups">Groups</a>
+      <a href="/generate">Generate</a>
+      <a href="/reports">Reports</a>
+    </nav>
+    <form method="post" action="/logout">
+      <button class="secondary" type="submit">Sign Out</button>
+    </form>
+  </aside>
+
+  <section class="content">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Sources</p>
+        <h2>Manage Subscription Sources</h2>
+        <p class="subtitle">Edit source ids, URLs, enabled flags, and formats in a single table.</p>
+      </div>
+    </header>
+
+    {% if saved %}
+    <div class="success-banner">Sources saved.</div>
+    {% endif %}
+
+    <form class="panel" method="post" action="/sources/save">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>Enabled</th>
+            <th>Format</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in mapping.get("sources", []) %}
+          <tr>
+            <td><input name="source_id" value="{{ item.get('id') }}"></td>
+            <td><input class="mono" name="source_url" value="{{ item.get('url') }}"></td>
+            <td>
+              <select name="source_enabled">
+                <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>true</option>
+                <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>false</option>
+              </select>
+            </td>
+            <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td><input name="source_id" value=""></td>
+            <td><input class="mono" name="source_url" value=""></td>
+            <td>
+              <select name="source_enabled">
+                <option value="true" selected>true</option>
+                <option value="false">false</option>
+              </select>
+            </td>
+            <td><input name="source_format" value="clash"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="form-actions">
+        <button type="submit">Save Sources</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

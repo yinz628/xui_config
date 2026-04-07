@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="app-shell">
+  <aside class="sidebar">
+    <div>
+      <p class="eyebrow">Data-First</p>
+      <h1>X-UI Console</h1>
+    </div>
+    <nav class="nav">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/sources">Sources</a>
+      <a class="active" href="/groups">Groups</a>
+      <a href="/generate">Generate</a>
+      <a href="/reports">Reports</a>
+    </nav>
+    <form method="post" action="/logout">
+      <button class="secondary" type="submit">Sign Out</button>
+    </form>
+  </aside>
+
+  <section class="content">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Groups</p>
+        <h2>Table-Based Rule Management</h2>
+        <p class="subtitle">Keep order, filters, excludes, ranges, and source scopes visible in one table.</p>
+      </div>
+    </header>
+
+    {% if saved %}
+    <div class="success-banner">Groups saved.</div>
+    {% endif %}
+    {% if error %}
+    <div class="error-banner">{{ error }}</div>
+    {% endif %}
+
+    <form class="panel" method="post" action="/groups/save">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Filter</th>
+            <th>Exclude</th>
+            <th>Sources</th>
+            <th>Start</th>
+            <th>End</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in mapping.get("groups", []) %}
+          <tr>
+            <td><input name="group_name" value="{{ item.get('name') }}"></td>
+            <td><input class="mono" name="group_filter" value="{{ item.get('filter') }}"></td>
+            <td><input class="mono" name="group_exclude" value="{{ item.get('exclude', '') }}"></td>
+            <td><input name="group_sources" value="{{ ','.join(item.get('source_ids', [])) }}"></td>
+            <td><input name="group_start" type="number" value="{{ item.get('port_range', {}).get('start') }}"></td>
+            <td><input name="group_end" type="number" value="{{ item.get('port_range', {}).get('end') }}"></td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <td><input name="group_name" value=""></td>
+            <td><input class="mono" name="group_filter" value=""></td>
+            <td><input class="mono" name="group_exclude" value=""></td>
+            <td><input name="group_sources" value=""></td>
+            <td><input name="group_start" type="number" value=""></td>
+            <td><input name="group_end" type="number" value=""></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="form-actions">
+        <button type="submit">Save Groups</button>
+      </div>
+    </form>
+  </section>
+</main>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="login-shell">
+  <section class="login-card">
+    <p class="eyebrow">X-UI Generator</p>
+    <h1>Web Console</h1>
+    <p class="subtitle">Sign in with the admin password to manage sources, groups, generation, and reports.</p>
+    {% if error %}
+    <p class="error-banner">{{ error }}</p>
+    {% endif %}
+    <form method="post" action="/login" class="stack">
+      <label for="password">Admin Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button type="submit">Enter Console</button>
+    </form>
+  </section>
+</main>
+{% endblock %}
