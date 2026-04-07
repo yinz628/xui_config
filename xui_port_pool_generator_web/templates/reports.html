@@ -3,56 +3,56 @@
 <main class="app-shell">
   <aside class="sidebar">
     <div>
-      <p class="eyebrow">Data-First</p>
-      <h1>X-UI Console</h1>
+      <p class="eyebrow">数据优先</p>
+      <h1>X-UI 中文控制台</h1>
     </div>
     <nav class="nav">
-      <a href="/dashboard">Dashboard</a>
-      <a href="/sources">Sources</a>
-      <a href="/groups">Groups</a>
-      <a href="/generate">Generate</a>
-      <a class="active" href="/reports">Reports</a>
+      <a href="/dashboard">首页</a>
+      <a href="/sources">订阅源</a>
+      <a href="/groups">分组规则</a>
+      <a href="/generate">生成</a>
+      <a class="active" href="/reports">报告</a>
     </nav>
     <form method="post" action="/logout">
-      <button class="secondary" type="submit">Sign Out</button>
+      <button class="secondary" type="submit">退出登录</button>
     </form>
   </aside>
 
   <section class="content">
     <header class="hero">
       <div>
-        <p class="eyebrow">Reports</p>
-        <h2>Latest Report and State</h2>
-        <p class="subtitle">Inspect the latest generated report summary, issue list, and port bindings per group.</p>
+        <p class="eyebrow">报告</p>
+        <h2>最新报告与状态</h2>
+        <p class="subtitle">查看最新生成摘要、异常列表，以及各组端口绑定状态。</p>
       </div>
     </header>
 
     <section class="summary-grid">
       <article class="summary-card">
-        <p class="eyebrow">Assigned Count</p>
+        <p class="eyebrow">已分配数量</p>
         <strong>{{ report.get("summary", {}).get("assigned_count", 0) }}</strong>
-        <span>Ports assigned</span>
+        <span>已分配端口</span>
       </article>
       <article class="summary-card">
-        <p class="eyebrow">Issue Count</p>
+        <p class="eyebrow">问题数量</p>
         <strong>{{ report.get("summary", {}).get("issue_count", 0) }}</strong>
-        <span>Reported issues</span>
+        <span>报告中的异常</span>
       </article>
       <article class="summary-card">
-        <p class="eyebrow">State Groups</p>
+        <p class="eyebrow">状态分组</p>
         <strong>{{ state.get("groups", {})|length }}</strong>
-        <span>Groups with bindings</span>
+        <span>已有绑定的组</span>
       </article>
     </section>
 
     <section class="panel">
-      <h3>Issues</h3>
+      <h3>问题列表</h3>
       <table class="data-table">
         <thead>
           <tr>
-            <th>Reason</th>
-            <th>Group</th>
-            <th>Node</th>
+            <th>原因</th>
+            <th>分组</th>
+            <th>节点</th>
           </tr>
         </thead>
         <tbody>
@@ -68,12 +68,12 @@
     </section>
 
     <section class="panel">
-      <h3>State Groups</h3>
+      <h3>状态分组</h3>
       <table class="data-table">
         <thead>
           <tr>
-            <th>Group</th>
-            <th>Bindings</th>
+            <th>分组</th>
+            <th>绑定数量</th>
           </tr>
         </thead>
         <tbody>

@@ -2,16 +2,16 @@
 {% block body %}
 <main class="login-shell">
   <section class="login-card">
-    <p class="eyebrow">X-UI Generator</p>
-    <h1>Web Console</h1>
-    <p class="subtitle">Sign in with the admin password to manage sources, groups, generation, and reports.</p>
+    <p class="eyebrow">X-UI 生成器</p>
+    <h1>中文控制台</h1>
+    <p class="subtitle">输入后台密码后即可管理订阅源、分组规则、生成任务和结果报告。</p>
     {% if error %}
     <p class="error-banner">{{ error }}</p>
     {% endif %}
     <form method="post" action="/login" class="stack">
-      <label for="password">Admin Password</label>
+      <label for="password">后台密码</label>
       <input id="password" name="password" type="password" autocomplete="current-password" required>
-      <button type="submit">Enter Console</button>
+      <button type="submit">进入控制台</button>
     </form>
   </section>
 </main>

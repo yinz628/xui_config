@@ -81,7 +81,7 @@ def test_generate_run_calls_pipeline_and_shows_summary(
     response = client.post("/generate/run", follow_redirects=True)
 
     assert response.status_code == 200
-    assert "Assigned Count" in response.text
+    assert "已分配数量" in response.text
     assert "7" in response.text
 
 
@@ -122,7 +122,7 @@ def test_dashboard_save_and_generate_updates_sources_then_runs_pipeline(
     )
 
     assert response.status_code == 200
-    assert "Generation finished." in response.text
+    assert "生成已完成。" in response.text
     assert "https://example.com/new-a" in calls[0]
 
 

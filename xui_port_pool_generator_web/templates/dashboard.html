@@ -3,44 +3,44 @@
 <main class="app-shell">
   <aside class="sidebar">
     <div>
-      <p class="eyebrow">Data-First</p>
-      <h1>X-UI Console</h1>
+      <p class="eyebrow">数据优先</p>
+      <h1>X-UI 中文控制台</h1>
     </div>
     <nav class="nav">
-      <a class="active" href="/dashboard">Dashboard</a>
-      <a href="/sources">Sources</a>
-      <a href="/groups">Groups</a>
-      <a href="/generate">Generate</a>
-      <a href="/reports">Reports</a>
+      <a class="active" href="/dashboard">首页</a>
+      <a href="/sources">订阅源</a>
+      <a href="/groups">分组规则</a>
+      <a href="/generate">生成</a>
+      <a href="/reports">报告</a>
     </nav>
     <form method="post" action="/logout">
-      <button class="secondary" type="submit">Sign Out</button>
+      <button class="secondary" type="submit">退出登录</button>
     </form>
   </aside>
 
   <section class="content">
     <header class="hero">
       <div>
-        <p class="eyebrow">Dashboard</p>
-        <h2>Sources Quick Edit</h2>
-        <p class="subtitle">Edit your subscription sources from the main workspace, then save or generate from here.</p>
+        <p class="eyebrow">首页</p>
+        <h2>订阅源快捷编辑</h2>
+        <p class="subtitle">在主工作区直接修改订阅源，并从这里完成保存或一键生成。</p>
       </div>
     </header>
 
     {% if saved %}
-    <div class="success-banner">Dashboard sources saved.</div>
+    <div class="success-banner">首页订阅源已保存。</div>
     {% endif %}
 
     <section class="panel">
-      <h3>Sources</h3>
+      <h3>订阅源</h3>
       <form method="post">
         <table class="data-table">
           <thead>
             <tr>
               <th>ID</th>
               <th>URL</th>
-              <th>Enabled</th>
-              <th>Format</th>
+              <th>启用</th>
+              <th>格式</th>
             </tr>
           </thead>
           <tbody>
@@ -50,8 +50,8 @@
               <td><input class="mono" name="source_url" value="{{ item.get('url') }}"></td>
               <td>
                 <select name="source_enabled">
-                  <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>true</option>
-                  <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>false</option>
+                  <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>启用</option>
+                  <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>停用</option>
                 </select>
               </td>
               <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
@@ -60,27 +60,27 @@
           </tbody>
         </table>
         <div class="form-actions hero-actions">
-          <button class="secondary" formaction="/dashboard/sources/save" type="submit">Save</button>
-          <button formaction="/dashboard/sources/save-and-generate" type="submit">Save and Generate</button>
+          <button class="secondary" formaction="/dashboard/sources/save" type="submit">保存</button>
+          <button formaction="/dashboard/sources/save-and-generate" type="submit">保存并生成</button>
         </div>
       </form>
     </section>
 
     <section class="summary-grid">
       <article class="summary-card">
-        <p class="eyebrow">Last Report</p>
+        <p class="eyebrow">最近报告</p>
         <strong>{{ report_summary.get("assigned_count", 0) }}</strong>
-        <span>Assigned ports</span>
+        <span>已分配端口</span>
       </article>
       <article class="summary-card">
-        <p class="eyebrow">Issues</p>
+        <p class="eyebrow">问题数</p>
         <strong>{{ report_summary.get("issue_count", 0) }}</strong>
-        <span>Reported problems</span>
+        <span>报告中的异常</span>
       </article>
       <article class="summary-card">
-        <p class="eyebrow">State Groups</p>
+        <p class="eyebrow">状态分组</p>
         <strong>{{ state_groups|length }}</strong>
-        <span>Groups with bindings</span>
+        <span>已有绑定的组</span>
       </article>
     </section>
   </section>

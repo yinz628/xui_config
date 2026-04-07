@@ -3,32 +3,32 @@
 <main class="app-shell">
   <aside class="sidebar">
     <div>
-      <p class="eyebrow">Data-First</p>
-      <h1>X-UI Console</h1>
+      <p class="eyebrow">数据优先</p>
+      <h1>X-UI 中文控制台</h1>
     </div>
     <nav class="nav">
-      <a href="/dashboard">Dashboard</a>
-      <a href="/sources">Sources</a>
-      <a class="active" href="/groups">Groups</a>
-      <a href="/generate">Generate</a>
-      <a href="/reports">Reports</a>
+      <a href="/dashboard">首页</a>
+      <a href="/sources">订阅源</a>
+      <a class="active" href="/groups">分组规则</a>
+      <a href="/generate">生成</a>
+      <a href="/reports">报告</a>
     </nav>
     <form method="post" action="/logout">
-      <button class="secondary" type="submit">Sign Out</button>
+      <button class="secondary" type="submit">退出登录</button>
     </form>
   </aside>
 
   <section class="content">
     <header class="hero">
       <div>
-        <p class="eyebrow">Groups</p>
-        <h2>Table-Based Rule Management</h2>
-        <p class="subtitle">Keep order, filters, excludes, ranges, and source scopes visible in one table.</p>
+        <p class="eyebrow">分组规则</p>
+        <h2>表格式规则管理</h2>
+        <p class="subtitle">把顺序、正则、排除项、端口段和来源范围都集中在一张表里。</p>
       </div>
     </header>
 
     {% if saved %}
-    <div class="success-banner">Groups saved.</div>
+    <div class="success-banner">分组规则已保存。</div>
     {% endif %}
     {% if error %}
     <div class="error-banner">{{ error }}</div>
@@ -38,12 +38,12 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Filter</th>
-            <th>Exclude</th>
-            <th>Sources</th>
-            <th>Start</th>
-            <th>End</th>
+            <th>名称</th>
+            <th>匹配规则</th>
+            <th>排除规则</th>
+            <th>来源范围</th>
+            <th>起始端口</th>
+            <th>结束端口</th>
           </tr>
         </thead>
         <tbody>
@@ -68,7 +68,7 @@
         </tbody>
       </table>
       <div class="form-actions">
-        <button type="submit">Save Groups</button>
+        <button type="submit">保存分组规则</button>
       </div>
     </form>
   </section>

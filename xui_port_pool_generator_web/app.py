@@ -36,7 +36,7 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         directory=str(Path(__file__).with_name("templates"))
     )
 
-    app = FastAPI(title="X-UI Web Console")
+    app = FastAPI(title="X-UI 中文控制台")
     app.add_middleware(SessionMiddleware, secret_key=settings.session_secret)
     app.state.settings = settings
     app.state.templates = templates
@@ -62,7 +62,7 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
             return templates.TemplateResponse(
                 request,
                 "login.html",
-                {"request": request, "error": "Invalid password"},
+                {"request": request, "error": "密码错误"},
                 status_code=401,
             )
         request.session["authenticated"] = True

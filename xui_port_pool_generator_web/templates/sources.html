@@ -3,32 +3,32 @@
 <main class="app-shell">
   <aside class="sidebar">
     <div>
-      <p class="eyebrow">Data-First</p>
-      <h1>X-UI Console</h1>
+      <p class="eyebrow">数据优先</p>
+      <h1>X-UI 中文控制台</h1>
     </div>
     <nav class="nav">
-      <a href="/dashboard">Dashboard</a>
-      <a class="active" href="/sources">Sources</a>
-      <a href="/groups">Groups</a>
-      <a href="/generate">Generate</a>
-      <a href="/reports">Reports</a>
+      <a href="/dashboard">首页</a>
+      <a class="active" href="/sources">订阅源</a>
+      <a href="/groups">分组规则</a>
+      <a href="/generate">生成</a>
+      <a href="/reports">报告</a>
     </nav>
     <form method="post" action="/logout">
-      <button class="secondary" type="submit">Sign Out</button>
+      <button class="secondary" type="submit">退出登录</button>
     </form>
   </aside>
 
   <section class="content">
     <header class="hero">
       <div>
-        <p class="eyebrow">Sources</p>
-        <h2>Manage Subscription Sources</h2>
-        <p class="subtitle">Edit source ids, URLs, enabled flags, and formats in a single table.</p>
+        <p class="eyebrow">订阅源</p>
+        <h2>管理订阅源</h2>
+        <p class="subtitle">在一张表格里维护 source id、URL、启用状态和格式。</p>
       </div>
     </header>
 
     {% if saved %}
-    <div class="success-banner">Sources saved.</div>
+    <div class="success-banner">订阅源已保存。</div>
     {% endif %}
 
     <form class="panel" method="post" action="/sources/save">
@@ -37,8 +37,8 @@
           <tr>
             <th>ID</th>
             <th>URL</th>
-            <th>Enabled</th>
-            <th>Format</th>
+            <th>启用</th>
+            <th>格式</th>
           </tr>
         </thead>
         <tbody>
@@ -48,8 +48,8 @@
             <td><input class="mono" name="source_url" value="{{ item.get('url') }}"></td>
             <td>
               <select name="source_enabled">
-                <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>true</option>
-                <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>false</option>
+                <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>启用</option>
+                <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>停用</option>
               </select>
             </td>
             <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
@@ -60,8 +60,8 @@
             <td><input class="mono" name="source_url" value=""></td>
             <td>
               <select name="source_enabled">
-                <option value="true" selected>true</option>
-                <option value="false">false</option>
+                <option value="true" selected>启用</option>
+                <option value="false">停用</option>
               </select>
             </td>
             <td><input name="source_format" value="clash"></td>
@@ -69,7 +69,7 @@
         </tbody>
       </table>
       <div class="form-actions">
-        <button type="submit">Save Sources</button>
+        <button type="submit">保存订阅源</button>
       </div>
     </form>
   </section>

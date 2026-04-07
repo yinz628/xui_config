@@ -81,4 +81,4 @@ def test_login_sets_session_and_allows_dashboard_access(tmp_path: Path) -> None:
     dashboard = client.get("/dashboard")
 
     assert dashboard.status_code == 200
-    assert "Sources Quick Edit" in dashboard.text
+    assert "订阅源快捷编辑" in dashboard.text
