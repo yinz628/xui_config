@@ -23,7 +23,8 @@ services:
     working_dir: /app
     command:
       - uvicorn
-      - xui_port_pool_generator_web.app:app
+      - xui_port_pool_generator_web.app:create_app
+      - --factory
       - --host
       - 0.0.0.0
       - --port

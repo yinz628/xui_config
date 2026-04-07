@@ -43,7 +43,8 @@ docker compose run --rm generator
 ```bash
 cd /opt/xui-config
 cp .env.example .env
-# edit WEB_ADMIN_PASSWORD and WEB_SESSION_SECRET first
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+# paste the generated secret into WEB_SESSION_SECRET and set WEB_ADMIN_PASSWORD
 docker compose up -d web
 ```
 

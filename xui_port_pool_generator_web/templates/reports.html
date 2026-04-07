@@ -1,96 +1,75 @@
-{% extends "base.html" %}
-{% block body %}
-<main class="app-shell">
-  <aside class="sidebar">
-    <div>
-      <p class="eyebrow">数据优先</p>
-      <h1>X-UI 中文控制台</h1>
-    </div>
-    <nav class="nav">
-      <a href="/dashboard">首页</a>
-      <a href="/sources">订阅源</a>
-      <a href="/groups">分组规则</a>
-      <a href="/generate">生成</a>
-      <a class="active" href="/reports">报告</a>
-    </nav>
-    <form method="post" action="/logout">
-      <button class="secondary" type="submit">退出登录</button>
-    </form>
-  </aside>
+{% extends "console_base.html" %}
+{% set active_nav = "reports" %}
+{% set page_eyebrow = "报告" %}
+{% set page_heading = "最新报告与状态" %}
+{% set page_subtitle = "查看最新生成摘要、异常列表，以及各组端口绑定状态。" %}
+{% block page_content %}
+<section class="summary-grid">
+  <article class="summary-card">
+    <p class="eyebrow">已分配数量</p>
+    <strong>{{ report.get("summary", {}).get("assigned_count", 0) }}</strong>
+    <span>已分配端口</span>
+  </article>
+  <article class="summary-card">
+    <p class="eyebrow">问题数量</p>
+    <strong>{{ report.get("summary", {}).get("issue_count", 0) }}</strong>
+    <span>报告中的异常</span>
+  </article>
+  <article class="summary-card">
+    <p class="eyebrow">状态分组</p>
+    <strong>{{ state.get("groups", {})|length }}</strong>
+    <span>已有绑定的组</span>
+  </article>
+</section>
 
-  <section class="content">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">报告</p>
-        <h2>最新报告与状态</h2>
-        <p class="subtitle">查看最新生成摘要、异常列表，以及各组端口绑定状态。</p>
-      </div>
-    </header>
+<section class="panel issues-panel">
+  <h3>问题列表</h3>
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>原因</th>
+          <th>分组</th>
+          <th>节点</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in report.get("issues", []) %}
+        <tr>
+          <td>
+            <div>{{ describe_issue_reason(item.get("reason", "")) }}</div>
+            <div class="mono issue-code">{{ item.get("reason") }}</div>
+          </td>
+          <td>{{ item.get("group_name", item.get("group", "-")) }}</td>
+          <td class="mono">{{ item.get("node_name", item.get("node", "-")) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 
-    <section class="summary-grid">
-      <article class="summary-card">
-        <p class="eyebrow">已分配数量</p>
-        <strong>{{ report.get("summary", {}).get("assigned_count", 0) }}</strong>
-        <span>已分配端口</span>
-      </article>
-      <article class="summary-card">
-        <p class="eyebrow">问题数量</p>
-        <strong>{{ report.get("summary", {}).get("issue_count", 0) }}</strong>
-        <span>报告中的异常</span>
-      </article>
-      <article class="summary-card">
-        <p class="eyebrow">状态分组</p>
-        <strong>{{ state.get("groups", {})|length }}</strong>
-        <span>已有绑定的组</span>
-      </article>
-    </section>
-
-    <section class="panel issues-panel">
-      <h3>问题列表</h3>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>原因</th>
-            <th>分组</th>
-            <th>节点</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in report.get("issues", []) %}
-          <tr>
-            <td>
-              <div>{{ describe_issue_reason(item.get("reason", "")) }}</div>
-              <div class="mono issue-code">{{ item.get("reason") }}</div>
-            </td>
-            <td>{{ item.get("group_name", item.get("group", "-")) }}</td>
-            <td class="mono">{{ item.get("node_name", item.get("node", "-")) }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </section>
-
-    <section class="panel">
-      <h3>状态分组</h3>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>分组</th>
-            <th>绑定数量</th>
-            <th>端口列表</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in state_rows %}
-          <tr>
-            <td>{{ row.group_name }}</td>
-            <td>{{ row.binding_count }}</td>
-            <td class="mono ports-cell">{{ row.ports | join(', ') }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </section>
-  </section>
-</main>
+<section class="panel">
+  <h3>状态分组</h3>
+  <div class="table-scroll">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>分组</th>
+          <th>绑定数量</th>
+          <th>端口列表</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in state_rows %}
+        <tr>
+          <td>{{ row.group_name }}</td>
+          <td>{{ row.binding_count }}</td>
+          <td class="mono ports-cell">{{ row.ports | join(', ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

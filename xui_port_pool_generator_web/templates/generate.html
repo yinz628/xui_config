@@ -1,90 +1,65 @@
-{% extends "base.html" %}
-{% block body %}
-<main class="app-shell">
-  <aside class="sidebar">
-    <div>
-      <p class="eyebrow">数据优先</p>
-      <h1>X-UI 中文控制台</h1>
-    </div>
-    <nav class="nav">
-      <a href="/dashboard">首页</a>
-      <a href="/sources">订阅源</a>
-      <a href="/groups">分组规则</a>
-      <a class="active" href="/generate">生成</a>
-      <a href="/reports">报告</a>
-    </nav>
-    <form method="post" action="/logout">
-      <button class="secondary" type="submit">退出登录</button>
-    </form>
-  </aside>
+{% extends "console_base.html" %}
+{% set active_nav = "generate" %}
+{% set page_eyebrow = "生成" %}
+{% set page_heading = "执行生成器" %}
+{% set page_subtitle = "基于当前配置执行一次生成，并查看最新摘要结果。" %}
+{% block page_content %}
+{% if generated %}
+<div class="success-banner">生成已完成。</div>
+{% endif %}
 
-  <section class="content">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">生成</p>
-        <h2>执行生成器</h2>
-        <p class="subtitle">基于当前配置执行一次生成，并查看最新摘要结果。</p>
-      </div>
-    </header>
+<section class="panel">
+  <h3>执行操作</h3>
+  <form method="post" action="/generate/run">
+    <button type="submit">立即生成</button>
+  </form>
+</section>
 
-    {% if generated %}
-    <div class="success-banner">生成已完成。</div>
-    {% endif %}
+<section class="summary-grid">
+  <article class="summary-card">
+    <p class="eyebrow">已分配数量</p>
+    <strong>{{ summary.get("assigned_count", 0) }}</strong>
+    <span>已分配端口</span>
+  </article>
+  <article class="summary-card">
+    <p class="eyebrow">问题数量</p>
+    <strong>{{ summary.get("issue_count", 0) }}</strong>
+    <span>本次报告异常</span>
+  </article>
+  <article class="summary-card">
+    <p class="eyebrow">订阅源</p>
+    <strong>{{ summary.get("source_count", 0) }}</strong>
+    <span>已加载源数量</span>
+  </article>
+</section>
 
-    <section class="panel">
-      <h3>执行操作</h3>
-      <form method="post" action="/generate/run">
-        <button type="submit">立即生成</button>
-      </form>
-    </section>
-
-    <section class="summary-grid">
-      <article class="summary-card">
-        <p class="eyebrow">已分配数量</p>
-        <strong>{{ summary.get("assigned_count", 0) }}</strong>
-        <span>已分配端口</span>
-      </article>
-      <article class="summary-card">
-        <p class="eyebrow">问题数量</p>
-        <strong>{{ summary.get("issue_count", 0) }}</strong>
-        <span>本次报告异常</span>
-      </article>
-      <article class="summary-card">
-        <p class="eyebrow">订阅源</p>
-        <strong>{{ summary.get("source_count", 0) }}</strong>
-        <span>已加载源数量</span>
-      </article>
-    </section>
-
-    <section class="panel">
-      <h3>生成文件</h3>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>文件</th>
-            <th>路径</th>
-            <th>下载</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>配置文件</td>
-            <td class="mono">{{ artifacts.config }}</td>
-            <td><a class="download-link" href="/downloads/config">下载</a></td>
-          </tr>
-          <tr>
-            <td>报告文件</td>
-            <td class="mono">{{ artifacts.report }}</td>
-            <td><a class="download-link" href="/downloads/report">下载</a></td>
-          </tr>
-          <tr>
-            <td>状态文件</td>
-            <td class="mono">{{ artifacts.state }}</td>
-            <td><a class="download-link" href="/downloads/state">下载</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </section>
-</main>
+<section class="panel">
+  <h3>生成文件</h3>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>文件</th>
+        <th>路径</th>
+        <th>下载</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>配置文件</td>
+        <td class="mono">{{ artifacts.config }}</td>
+        <td><a class="download-link" href="/downloads/config">下载</a></td>
+      </tr>
+      <tr>
+        <td>报告文件</td>
+        <td class="mono">{{ artifacts.report }}</td>
+        <td><a class="download-link" href="/downloads/report">下载</a></td>
+      </tr>
+      <tr>
+        <td>状态文件</td>
+        <td class="mono">{{ artifacts.state }}</td>
+        <td><a class="download-link" href="/downloads/state">下载</a></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
 {% endblock %}
