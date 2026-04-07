@@ -17,6 +17,18 @@ def parse_clash_subscription_with_issues(
     raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     nodes: list[NormalizedNode] = []
     issues: list[dict] = []
+    if not isinstance(raw, dict):
+        return (
+            [],
+            [
+                {
+                    "group_name": None,
+                    "node_name": "<subscription>",
+                    "reason": "parse_error_invalid_subscription_payload",
+                    "source_id": source_id,
+                }
+            ],
+        )
     for proxy in raw.get("proxies", []):
         missing_fields = [
             field for field in ("name", "type", "server", "port") if field not in proxy

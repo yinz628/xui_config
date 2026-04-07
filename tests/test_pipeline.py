@@ -75,3 +75,42 @@ runtime:
 
     assert result["summary"]["assigned_count"] == 1
     assert any(item["reason"] == "parse_error_missing_port" for item in report["issues"])
+
+
+def test_run_pipeline_reports_non_mapping_subscription_payload(
+    tmp_path: Path,
+) -> None:
+    source_path = tmp_path / "plain-sub.txt"
+    source_path.write_text("dm1lc3M6Ly9leGFtcGxl\n", encoding="utf-8")
+    mapping_path = tmp_path / "mapping.yaml"
+    mapping_path.write_text(
+        f"""
+version: 1
+sources:
+  - id: airport_a
+    url: file:///{source_path.as_posix()}
+    format: clash
+groups:
+  - name: tg_hk
+    filter: "(?i)hk"
+    port_range: {{start: 20000, end: 20009}}
+runtime:
+  cache_dir: ./cache/subscriptions
+  state_path: ./state/port_bindings.json
+  output_path: ./config.generated.json
+  report_path: ./config.generated.report.json
+  output_mode: config_json
+""".strip(),
+        encoding="utf-8",
+    )
+
+    result = run_pipeline(mapping_path, Path(r"F:\x-ui\config.json"), tmp_path)
+    report = json.loads(
+        (tmp_path / "config.generated.report.json").read_text(encoding="utf-8")
+    )
+
+    assert result["summary"]["assigned_count"] == 0
+    assert any(
+        item["reason"] == "parse_error_invalid_subscription_payload"
+        for item in report["issues"]
+    )
