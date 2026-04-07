@@ -4,6 +4,7 @@ from xui_port_pool_generator.clash_parser import parse_clash_subscription
 from xui_port_pool_generator.grouping import group_nodes
 from xui_port_pool_generator.models import GroupConfig, PortRange
 from xui_port_pool_generator.stable_keys import build_name_affinity_key, build_node_uid
+from xui_port_pool_generator.subscriptions import normalize_file_url_path
 
 
 def test_random_filename_does_not_change_source_identity(tmp_path: Path) -> None:
@@ -63,3 +64,16 @@ proxies:
 
     assert [name for name, _ in matched] == ["fallback_hk"]
     assert dropped == []
+
+
+def test_normalize_file_url_path_preserves_posix_absolute_paths() -> None:
+    assert (
+        normalize_file_url_path("/app/config/subscriptions/310config86-106.yaml")
+        == "/app/config/subscriptions/310config86-106.yaml"
+    )
+
+
+def test_normalize_file_url_path_strips_windows_drive_prefix_slash() -> None:
+    assert normalize_file_url_path("/F:/x-ui/310config86-106.yaml") == (
+        "F:/x-ui/310config86-106.yaml"
+    )
