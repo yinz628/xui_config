@@ -94,4 +94,4 @@ def test_css_keeps_sidebar_visible_and_limits_issue_panel_height() -> None:
     assert "height: 100vh;" in text
     assert ".issues-panel" in text
     assert "overflow: auto;" in text
-    assert "grid-template-columns: 220px 1fr;" in text
+    assert "grid-template-columns: 180px 1fr;" in text
