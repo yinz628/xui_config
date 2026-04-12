@@ -28,12 +28,51 @@ def inspect_source_url(url: str, source_format: str) -> dict:
         except Exception as exc:  # noqa: BLE001
             return {"ok": False, "message": f"检测失败：{exc}"}
 
-        nodes, issues = parse_clash_subscription_with_issues("preview", cached_path)
+        try:
+            nodes, issues = parse_clash_subscription_with_issues(
+                "preview",
+                cached_path,
+            )
+        except Exception as exc:  # noqa: BLE001
+            return {"ok": False, "message": f"检测失败：{exc}"}
         if not nodes:
+            if (
+                issues
+                and issues[0].get("reason")
+                == "parse_error_invalid_subscription_payload"
+            ):
+                raw_text = cached_path.read_text(encoding="utf-8", errors="ignore")
+                if _looks_like_html(raw_text):
+                    return {
+                        "ok": False,
+                        "message": "检测失败：链接返回 HTML 页面，不是订阅内容。",
+                    }
+                if _looks_like_base64(raw_text):
+                    return {
+                        "ok": False,
+                        "message": "检测失败：base64 内容不可识别/不是节点订阅。",
+                    }
+
             reason = issues[0]["reason"] if issues else "未识别到节点"
             return {"ok": False, "message": f"检测失败：{reason}"}
 
         return {"ok": True, "message": f"检测成功：{len(nodes)} 个节点"}
+
+
+def _looks_like_html(text: str) -> bool:
+    trimmed = text.lstrip().lower()
+    if not trimmed:
+        return False
+    if trimmed.startswith("<!doctype html") or trimmed.startswith("<html"):
+        return True
+    return "<html" in trimmed[:400]
+
+
+def _looks_like_base64(text: str) -> bool:
+    compact = re.sub(r"\s+", "", text.strip())
+    if len(compact) < 32:
+        return False
+    return bool(re.fullmatch(r"[A-Za-z0-9+/=_-]+", compact))
 
 
 def import_yaml_source(

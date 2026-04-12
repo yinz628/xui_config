@@ -111,6 +111,20 @@ def test_sources_check_reports_subscription_status(tmp_path: Path, monkeypatch) 
     assert "检测成功：12 个节点" in response.text
 
 
+def test_inspect_source_url_accepts_base64_subscription_file(tmp_path: Path) -> None:
+    from xui_port_pool_generator_web.source_tools import inspect_source_url
+
+    base64_payload_path = tmp_path / "base64-sub.txt"
+    base64_payload_path.write_text(
+        "c3M6Ly9ZV1Z6TFRFeU9DMW5ZMjA2Y0hjPUBoay5leGFtcGxlLmNvbTo0NDMjSEsgMDEK",
+        encoding="utf-8",
+    )
+
+    result = inspect_source_url(f"file:///{base64_payload_path.as_posix()}", "clash")
+
+    assert result["ok"] is True
+
+
 def test_import_yaml_upload_adds_local_file_source(tmp_path: Path) -> None:
     settings = create_workspace(tmp_path)
     client = TestClient(create_app(settings))

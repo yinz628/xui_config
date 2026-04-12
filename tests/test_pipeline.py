@@ -1,3 +1,4 @@
+import base64
 import json
 from pathlib import Path
 
@@ -114,6 +115,40 @@ runtime:
         item["reason"] == "parse_error_invalid_subscription_payload"
         for item in report["issues"]
     )
+
+
+def test_run_pipeline_accepts_base64_subscription_blob(tmp_path: Path) -> None:
+    payload = "ss://YWVzLTEyOC1nY206cHc=@hk.example.com:443#HK%2001\n"
+    encoded = base64.b64encode(payload.encode("utf-8")).decode("ascii")
+    source_path = tmp_path / "base64-sub.txt"
+    source_path.write_text(encoded, encoding="utf-8")
+    mapping_path = tmp_path / "mapping.yaml"
+    mapping_path.write_text(
+        f"""
+version: 1
+sources:
+  - id: airport_a
+    url: file:///{source_path.as_posix()}
+    format: clash
+groups:
+  - name: tg_hk
+    filter: "(?i)hk"
+    port_range: {{start: 20000, end: 20009}}
+runtime:
+  cache_dir: ./cache/subscriptions
+  state_path: ./state/port_bindings.json
+  output_path: ./config.generated.json
+  report_path: ./config.generated.report.json
+  output_mode: config_json
+""".strip(),
+        encoding="utf-8",
+    )
+
+    result = run_pipeline(mapping_path, Path(r"F:\x-ui\config.json"), tmp_path)
+    config = json.loads((tmp_path / "config.generated.json").read_text(encoding="utf-8"))
+
+    assert result["summary"]["assigned_count"] == 1
+    assert any(item.get("tag") == "HK 01" for item in config.get("outbounds", []))
 
 
 def test_run_pipeline_defaults_inbound_listen_to_all_interfaces(
