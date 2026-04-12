@@ -43,14 +43,15 @@ docker compose run --rm generator
 ```bash
 cd /opt/xui-config
 cp .env.example .env
-# edit WEB_ADMIN_PASSWORD and WEB_SESSION_SECRET first
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+# paste the generated secret into WEB_SESSION_SECRET and set WEB_ADMIN_PASSWORD
 docker compose up -d web
 ```
 
 Open:
 
 ```text
-http://<server-ip>:8000/login
+http://<server-ip>:18080/login
 ```
 
 ## Check Results
@@ -66,7 +67,7 @@ sed -n '1,80p' /opt/xui-config/output/config.generated.report.json
 ```bash
 cd /opt/xui-config
 docker compose ps
-curl -I http://127.0.0.1:8000/login
+curl -I http://127.0.0.1:18080/login
 ```
 
 ## Smoke

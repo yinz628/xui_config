@@ -32,13 +32,14 @@ def test_compose_includes_web_service_with_port_and_shared_mounts() -> None:
     assert service["working_dir"] == "/app"
     assert service["command"] == [
         "uvicorn",
-        "xui_port_pool_generator_web.app:app",
+        "xui_port_pool_generator_web.app:create_app",
+        "--factory",
         "--host",
         "0.0.0.0",
         "--port",
-        "8000",
+        "18080",
     ]
-    assert "8000:8000" in service["ports"]
+    assert "18080:18080" in service["ports"]
     assert "./config:/app/config" in service["volumes"]
     assert "./data/cache:/app/cache" in service["volumes"]
     assert "./data/state:/app/state" in service["volumes"]
@@ -76,3 +77,5 @@ def test_requirements_and_env_example_include_web_dependencies() -> None:
     assert "jinja2" in requirements.lower()
     assert "WEB_ADMIN_PASSWORD" in env_text
     assert "WEB_SESSION_SECRET" in env_text
+    assert "WEB_ADMIN_PASSWORD=__CHANGE_ME__" in env_text
+    assert "WEB_SESSION_SECRET=__GENERATE_A_LONG_RANDOM_SECRET__" in env_text

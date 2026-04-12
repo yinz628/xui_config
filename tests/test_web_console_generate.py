@@ -129,6 +129,35 @@ def test_dashboard_save_and_generate_updates_sources_then_runs_pipeline(
     assert "https://example.com/new-a" in calls[0]
 
 
+def test_dashboard_save_and_generate_reports_pipeline_errors_in_page(
+    tmp_path: Path, monkeypatch
+) -> None:
+    settings = create_workspace(tmp_path)
+
+    def fail_run_pipeline(mapping_path: Path, template_path: Path, workdir: Path) -> dict:
+        raise RuntimeError("HTTP Error 403: Forbidden")
+
+    monkeypatch.setattr("xui_port_pool_generator_web.app.run_pipeline", fail_run_pipeline)
+
+    client = TestClient(create_app(settings))
+    login(client)
+
+    response = client.post(
+        "/dashboard/sources/save-and-generate",
+        data={
+            "source_id": ["airport_a"],
+            "source_url": ["https://example.com/new-a"],
+            "source_enabled": ["true"],
+            "source_format": ["clash"],
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert "生成失败" in response.text
+    assert "HTTP Error 403: Forbidden" in response.text
+
+
 def test_reports_page_reads_report_and_state_files(tmp_path: Path) -> None:
     settings = create_workspace(tmp_path)
     (tmp_path / "output" / "config.generated.report.json").write_text(

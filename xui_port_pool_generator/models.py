@@ -23,6 +23,12 @@ class GroupConfig:
     port_range: PortRange
     exclude: str | None = None
     source_ids: tuple[str, ...] = ()
+    include_regions: tuple[str, ...] = ()
+    exclude_regions: tuple[str, ...] = ()
+    manual_include_nodes: tuple[str, ...] = ()
+    manual_exclude_nodes: tuple[str, ...] = ()
+    filter_regex: str = ""
+    exclude_regex: str = ""
 
 
 @dataclass(frozen=True)

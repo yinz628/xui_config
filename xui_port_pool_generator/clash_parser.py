@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import yaml
-
 from .models import NormalizedNode
+from .subscription_payloads import extract_proxies_from_payload
 
 
 def parse_clash_subscription(source_id: str, path: Path) -> list[NormalizedNode]:
@@ -14,10 +13,11 @@ def parse_clash_subscription_with_issues(
     source_id: str,
     path: Path,
 ) -> tuple[list[NormalizedNode], list[dict]]:
-    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     nodes: list[NormalizedNode] = []
     issues: list[dict] = []
-    if not isinstance(raw, dict):
+
+    proxies = extract_proxies_from_payload(path.read_text(encoding="utf-8"))
+    if not proxies:
         return (
             [],
             [
@@ -29,7 +29,8 @@ def parse_clash_subscription_with_issues(
                 }
             ],
         )
-    for proxy in raw.get("proxies", []):
+
+    for proxy in proxies:
         missing_fields = [
             field for field in ("name", "type", "server", "port") if field not in proxy
         ]

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block body %}
+<main class="app-shell" data-active-nav="{{ active_nav }}">
+  <aside class="sidebar">
+    <div>
+      <p class="eyebrow">数据优先</p>
+      <h1>X-UI 中文控制台</h1>
+    </div>
+    <nav class="nav">
+      <a class="{% if active_nav == 'dashboard' %}active{% endif %}" href="/dashboard">首页</a>
+      <a class="{% if active_nav == 'sources' %}active{% endif %}" href="/sources">订阅源</a>
+      <a class="{% if active_nav == 'groups' %}active{% endif %}" href="/groups">分组规则</a>
+      <a class="{% if active_nav == 'generate' %}active{% endif %}" href="/generate">生成</a>
+      <a class="{% if active_nav == 'reports' %}active{% endif %}" href="/reports">报告</a>
+      <a class="{% if active_nav == 'runtime-config' %}active{% endif %}" href="/runtime-config">运行态配置</a>
+    </nav>
+    <form method="post" action="/logout">
+      <button class="secondary" type="submit">退出登录</button>
+    </form>
+  </aside>
+
+  <section class="content">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">{{ page_eyebrow }}</p>
+        <h2 class="hero-title">{{ page_heading }}</h2>
+        <p class="subtitle">{{ page_subtitle }}</p>
+      </div>
+      {% block hero_actions %}{% endblock %}
+    </header>
+
+    {% block page_content %}{% endblock %}
+  </section>
+</main>
+{% endblock %}

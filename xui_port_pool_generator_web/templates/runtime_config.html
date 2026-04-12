@@ -1,0 +1,70 @@
+{% extends "console_base.html" %}
+{% set active_nav = "runtime-config" %}
+{% set page_eyebrow = "运行态配置" %}
+{% set page_heading = "管理 mapping.yaml 与 config.json" %}
+{% set page_subtitle = "查看当前运行态路径、大小和更新时间，并直接在线编辑保存。" %}
+{% block page_content %}
+<section class="summary-grid">
+  <article class="summary-card">
+    <p class="eyebrow">mapping.yaml</p>
+    <p class="path-value mono">{{ mapping_meta.path }}</p>
+    <span>大小：{{ mapping_meta.size or 0 }} 字节</span>
+  </article>
+  <article class="summary-card">
+    <p class="eyebrow">config.json</p>
+    <p class="path-value mono">{{ template_meta.path }}</p>
+    <span>大小：{{ template_meta.size or 0 }} 字节</span>
+  </article>
+</section>
+
+{% if mapping_message %}
+<div class="success-banner">{{ mapping_message }}</div>
+{% endif %}
+{% if template_message %}
+<div class="success-banner">{{ template_message }}</div>
+{% endif %}
+{% if mapping_error %}
+<div class="error-banner">{{ mapping_error }}</div>
+{% endif %}
+{% if template_error %}
+<div class="error-banner">{{ template_error }}</div>
+{% endif %}
+
+<section class="panel">
+  <h3>当前 mapping.yaml</h3>
+  <p class="subtitle">示例文件：{{ example_mapping_meta.path }}</p>
+  <div class="runtime-actions">
+    <form method="post" action="/runtime-config/save-mapping" class="stack">
+      <textarea name="mapping_text" rows="18">{{ mapping_meta.text }}</textarea>
+      <div class="form-actions">
+        <button type="submit">保存 mapping.yaml</button>
+      </div>
+    </form>
+    <form method="post" action="/runtime-config/upload-mapping" enctype="multipart/form-data" class="stack upload-form">
+      <input type="file" name="mapping_file" accept=".yaml,.yml,application/x-yaml,text/yaml" required>
+      <div class="form-actions">
+        <button class="secondary" type="submit">上传 mapping.yaml</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="panel">
+  <h3>当前 config.json</h3>
+  <p class="subtitle">示例文件：{{ example_template_meta.path }}</p>
+  <div class="runtime-actions">
+    <form method="post" action="/runtime-config/save-template" class="stack">
+      <textarea name="template_text" rows="18">{{ template_meta.text }}</textarea>
+      <div class="form-actions">
+        <button type="submit">保存 config.json</button>
+      </div>
+    </form>
+    <form method="post" action="/runtime-config/upload-template" enctype="multipart/form-data" class="stack upload-form">
+      <input type="file" name="template_file" accept=".json,application/json" required>
+      <div class="form-actions">
+        <button class="secondary" type="submit">上传 config.json</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

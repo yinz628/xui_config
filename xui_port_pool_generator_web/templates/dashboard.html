@@ -1,88 +1,68 @@
-{% extends "base.html" %}
-{% block body %}
-<main class="app-shell">
-  <aside class="sidebar">
-    <div>
-      <p class="eyebrow">数据优先</p>
-      <h1>X-UI 中文控制台</h1>
+{% extends "console_base.html" %}
+{% set active_nav = "dashboard" %}
+{% set page_eyebrow = "首页" %}
+{% set page_heading = "订阅源快捷编辑" %}
+{% set page_subtitle = "在主工作区直接修改订阅源，并从这里完成保存或一键生成。" %}
+{% block page_content %}
+{% if saved %}
+<div class="success-banner">首页订阅源已保存。</div>
+{% endif %}
+{% if generate_error %}
+<div class="error-banner">{{ generate_error }}</div>
+{% endif %}
+
+<section class="panel">
+  <h3>订阅源</h3>
+  <form method="post">
+    <div class="table-scroll">
+      <table class="data-table sources-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th>启用</th>
+            <th>格式</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in mapping.get("sources", []) %}
+          <tr>
+            <td><input name="source_id" value="{{ item.get('id') }}"></td>
+            <td><input class="mono" name="source_url" value="{{ item.get('url') }}"></td>
+            <td>
+              <select name="source_enabled">
+                <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>启用</option>
+                <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>停用</option>
+              </select>
+            </td>
+            <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-    <nav class="nav">
-      <a class="active" href="/dashboard">首页</a>
-      <a href="/sources">订阅源</a>
-      <a href="/groups">分组规则</a>
-      <a href="/generate">生成</a>
-      <a href="/reports">报告</a>
-    </nav>
-    <form method="post" action="/logout">
-      <button class="secondary" type="submit">退出登录</button>
-    </form>
-  </aside>
+    <div class="form-actions hero-actions">
+      <button class="secondary" formaction="/dashboard/sources/save" type="submit">保存</button>
+      <button formaction="/dashboard/sources/save-and-generate" type="submit">保存并生成</button>
+    </div>
+  </form>
+</section>
 
-  <section class="content">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">首页</p>
-        <h2>订阅源快捷编辑</h2>
-        <p class="subtitle">在主工作区直接修改订阅源，并从这里完成保存或一键生成。</p>
-      </div>
-    </header>
-
-    {% if saved %}
-    <div class="success-banner">首页订阅源已保存。</div>
-    {% endif %}
-
-    <section class="panel">
-      <h3>订阅源</h3>
-      <form method="post">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>URL</th>
-              <th>启用</th>
-              <th>格式</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in mapping.get("sources", []) %}
-            <tr>
-              <td><input name="source_id" value="{{ item.get('id') }}"></td>
-              <td><input class="mono" name="source_url" value="{{ item.get('url') }}"></td>
-              <td>
-                <select name="source_enabled">
-                  <option value="true" {% if item.get('enabled', True) %}selected{% endif %}>启用</option>
-                  <option value="false" {% if not item.get('enabled', True) %}selected{% endif %}>停用</option>
-                </select>
-              </td>
-              <td><input name="source_format" value="{{ item.get('format', 'clash') }}"></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <div class="form-actions hero-actions">
-          <button class="secondary" formaction="/dashboard/sources/save" type="submit">保存</button>
-          <button formaction="/dashboard/sources/save-and-generate" type="submit">保存并生成</button>
-        </div>
-      </form>
-    </section>
-
-    <section class="summary-grid">
-      <article class="summary-card">
-        <p class="eyebrow">最近报告</p>
-        <strong>{{ report_summary.get("assigned_count", 0) }}</strong>
-        <span>已分配端口</span>
-      </article>
-      <article class="summary-card">
-        <p class="eyebrow">问题数</p>
-        <strong>{{ report_summary.get("issue_count", 0) }}</strong>
-        <span>报告中的异常</span>
-      </article>
-      <article class="summary-card">
-        <p class="eyebrow">状态分组</p>
-        <strong>{{ state_groups|length }}</strong>
-        <span>已有绑定的组</span>
-      </article>
-    </section>
-  </section>
-</main>
+<section class="summary-grid">
+  <article class="summary-card">
+    <p class="eyebrow">最近报告</p>
+    <strong>{{ report_summary.get("assigned_count", 0) }}</strong>
+    <span>已分配端口</span>
+  </article>
+  <article class="summary-card">
+    <p class="eyebrow">问题数</p>
+    <strong>{{ report_summary.get("issue_count", 0) }}</strong>
+    <span>报告中的异常</span>
+  </article>
+  <article class="summary-card">
+    <p class="eyebrow">状态分组</p>
+    <strong>{{ state_groups|length }}</strong>
+    <span>已有绑定的组</span>
+  </article>
+</section>
 {% endblock %}
